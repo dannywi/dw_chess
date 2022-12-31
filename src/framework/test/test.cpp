@@ -68,7 +68,21 @@ TEST(BOARD, Positions) {
 }
 
 TEST(BOARD, BadPositions) {
-  for (const char* pos_c : {"I1", "a0", "b11", "C9"}) {
-    EXPECT_THROW(dwc::Pos{pos_c}, std::range_error);
+  for (const char* pos_c : {"I1", "a0", "b11", "C9"}) { EXPECT_THROW(dwc::Pos{pos_c}, std::range_error); }
+}
+
+TEST(BOARD, BoardReset) {
+  dwc::Board b;
+  b.reset_position();
+  EXPECT_EQ(b.get({"B2"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::WHITE}));
+  EXPECT_EQ(b.get({"E1"}).value(), (dwc::Piece{dwc::Type::KING, dwc::Side::WHITE}));
+  EXPECT_EQ(b.get({"H8"}).value(), (dwc::Piece{dwc::Type::ROOK, dwc::Side::BLACK}));
+  EXPECT_EQ(b.get({"B8"}).value(), (dwc::Piece{dwc::Type::KNIGHT, dwc::Side::BLACK}));
+
+  for (char file : {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}) {
+    for (char rank : {'3', '4', '5', '6'}) {
+      std::string pos_s{file, rank};
+      EXPECT_FALSE(b.get({pos_s}).has_value());
+    }
   }
 }
