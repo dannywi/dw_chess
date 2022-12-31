@@ -73,6 +73,7 @@ struct Pos {
 struct Piece {
   Type type;
   Side side;
+  bool operator==(const Piece& p) const { return type == p.type && side == p.side; }
 };
 
 struct Square {

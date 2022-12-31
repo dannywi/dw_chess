@@ -9,10 +9,22 @@ TEST(BOARD, BoardEmpty) {
   dwc::Board b;
   for (char file : {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}) {
     for (char rank : {'1', '2', '3', '4', '5', '6', '7', '8'}) {
-      const char pos_c[2] = {file, rank};
-      EXPECT_FALSE(b.get({pos_c}).has_value());
+      std::string pos_s{file, rank};
+      EXPECT_FALSE(b.get({pos_s}).has_value());
     }
   }
+}
+
+TEST(BOARD, BoardClear) {
+  dwc::Board b;
+  const char* pos_c = "c7";
+  EXPECT_FALSE(b.get({pos_c}).has_value());
+  dwc::Piece p{dwc::Type::BISHOP, dwc::Side::WHITE};
+  b.set({pos_c}, p);
+  EXPECT_TRUE(b.get({pos_c}).has_value());
+  EXPECT_EQ(b.get({pos_c}).value(), p);
+  b.clear({pos_c});
+  EXPECT_FALSE(b.get({pos_c}).has_value());
 }
 
 TEST(BOARD, BoardSettings) {
@@ -30,7 +42,7 @@ TEST(BOARD, BoardSettings) {
 
   dwc::Board b;
   for (auto t : tests) {
-    b.set({t.pos_c}, dwc::Piece{t.type, t.side});
+    b.set({t.pos_c}, {t.type, t.side});
     EXPECT_TRUE(b.get({t.pos_c}).has_value());
     EXPECT_EQ(b.get({t.pos_c}).value().side, t.side);
     EXPECT_EQ(b.get({t.pos_c}).value().type, t.type);
