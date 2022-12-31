@@ -66,3 +66,9 @@ TEST(BOARD, Positions) {
     EXPECT_EQ(p.rank, t.rank);
   }
 }
+
+TEST(BOARD, BadPositions) {
+  for (const char* pos_c : {"I1", "a0", "b11", "C9"}) {
+    EXPECT_THROW(dwc::Pos{pos_c}, std::range_error);
+  }
+}
