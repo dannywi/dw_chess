@@ -1,0 +1,18 @@
+BasedOnStyle:  Google
+Language:        Cpp
+
+# The 80 character column limit seems overly restrictive provided most
+# developers use wide screen monitors. This also gets us closer to
+# formats used in the broader Woven ecosystem.
+ColumnLimit: 120
+
+# We should have a standardized pointer alignment. I prefer left, but I
+# am happy as long as it is specified and not middle.
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# To conform to A7-1-7.
+AllowShortBlocksOnASingleLine: Always
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortLambdasOnASingleLine: All
+AllowShortFunctionsOnASingleLine: Inline
