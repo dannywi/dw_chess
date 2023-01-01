@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "src/framework/board.hpp"
+#include "src/framework/display.hpp"  // delete
 
 TEST(BOARD, BoardEmpty) {
   dwc::Board b;
@@ -85,4 +86,11 @@ TEST(BOARD, BoardReset) {
       EXPECT_FALSE(b.get({pos_s}).has_value());
     }
   }
+}
+
+TEST(BOARD, TempDisplay) {
+  dwc::Board b;
+  b.reset_position();
+  dwc::display(b);
+  EXPECT_TRUE(1);
 }

@@ -3,50 +3,9 @@
 #include <array>
 #include <optional>
 
+#include "basic_types.hpp"
+
 namespace dwc {
-// move to own file
-
-enum class Type : uint8_t {
-  PAWN,
-  KNIGHT,
-  BISHOP,
-  ROOK,
-  QUEEN,
-  KING,
-  SIZE,
-};
-
-enum class Side : uint8_t {
-  WHITE,
-  BLACK,
-  SIZE,
-};
-
-template <typename ENUM, typename T = size_t>
-T cast_t(ENUM e) {
-  return static_cast<T>(e);
-}
-
-char getPieceSymbol(Type type, Side side) {
-  // todo: make constexpr
-  char map[cast_t(Type::SIZE)][cast_t(Side::SIZE)];
-
-  map[cast_t(Type::PAWN)][cast_t(Side::WHITE)] = 'P';
-  map[cast_t(Type::KNIGHT)][cast_t(Side::WHITE)] = 'N';
-  map[cast_t(Type::BISHOP)][cast_t(Side::WHITE)] = 'B';
-  map[cast_t(Type::ROOK)][cast_t(Side::WHITE)] = 'R';
-  map[cast_t(Type::QUEEN)][cast_t(Side::WHITE)] = 'Q';
-  map[cast_t(Type::KING)][cast_t(Side::WHITE)] = 'K';
-
-  map[cast_t(Type::PAWN)][cast_t(Side::BLACK)] = 'p';
-  map[cast_t(Type::KNIGHT)][cast_t(Side::BLACK)] = 'n';
-  map[cast_t(Type::BISHOP)][cast_t(Side::BLACK)] = 'b';
-  map[cast_t(Type::ROOK)][cast_t(Side::BLACK)] = 'r';
-  map[cast_t(Type::QUEEN)][cast_t(Side::BLACK)] = 'q';
-  map[cast_t(Type::KING)][cast_t(Side::BLACK)] = 'k';
-
-  return map[cast_t(type)][cast_t(side)];
-}
 
 struct Pos {
   uint8_t file;
@@ -81,7 +40,8 @@ struct Square {
 };
 
 class Board {
-  std::array<std::array<Square, 8>, 8> board_;
+  using BoardT = std::array<std::array<Square, 8>, 8>;
+  BoardT board_;
 
  public:
   void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }

@@ -28,9 +28,9 @@ Provide I/O functionalities:
 - ensemble the board + engine + logic
 
 ## TODO
-- framework: setup board class(es) with internal reps
+DONE - framework: setup board class(es) with internal reps
   DONE - setup position, square, piece classes
-  - setup board with initial position
+  DONE - setup board with initial position
 - framework: plugin display func
 - framework: provide APIs
 - rule: legal moves per piece
@@ -41,3 +41,4 @@ Provide I/O functionalities:
 
 ### Cleanups
 - include in tests, remove full paths
+- add gha to do buildifier and clang format automatically on commit
