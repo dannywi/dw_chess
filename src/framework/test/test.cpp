@@ -69,7 +69,7 @@ TEST(BOARD, Positions) {
 }
 
 TEST(BOARD, BadPositions) {
-  for (const char* pos_c : {"I1", "a0", "b11", "C9"}) { EXPECT_THROW(dwc::Pos{pos_c}, std::range_error); }
+  for (const char* pos_c : {"I1", "a0", "b11", "C9"}) { EXPECT_THROW(dwc::Pos{pos_c}, std::logic_error); }
 }
 
 TEST(BOARD, BoardReset) {
@@ -102,7 +102,9 @@ TEST(BOARD, BoardMove) {
   EXPECT_FALSE(b.get({"c7"}).has_value());
   EXPECT_EQ(b.get({"c6"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::BLACK}));
 
-  EXPECT_THROW(b.move({"h5"}, {"e2"}), std::range_error);
+  EXPECT_THROW(b.move({"h5"}, {"e2"}), std::logic_error);
+  EXPECT_THROW(b.move({"d7"}, {"d5"}), std::logic_error);
+
   dwc::display(b);
 }
 

@@ -20,7 +20,7 @@ struct Pos {
       auto v = pos[1];
       return ('1' <= v && v <= '8');
     };
-    if (!check_pos() || !check_file() || !check_rank()) { throw std::range_error("invalid position"); }
+    if (!check_pos() || !check_file() || !check_rank()) { throw std::logic_error("invalid position"); }
 
     file = pos[0] - (('a' <= pos[0] && pos[0] <= 'h') ? 'a' : 'A');
     rank = pos[1] - '1';
@@ -42,6 +42,18 @@ struct Square {
 class Board {
   using BoardT = std::array<std::array<Square, 8>, 8>;
   BoardT board_;
+  std::optional<Side> turn_;
+
+  void flip_turn() {
+    if (!turn_.has_value()) return;
+    turn_ = turn_.value() == Side::WHITE ? Side::BLACK : Side::WHITE;
+  }
+
+  void check_move(Pos fr, Pos) {
+    std::optional<Piece> piece = get(fr);
+    if (!piece.has_value()) { throw std::logic_error("moving empty square"); }
+    if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
+  }
 
  public:
   void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }
@@ -84,15 +96,19 @@ class Board {
     set({"F7"}, {Type::PAWN, Side::BLACK});
     set({"G7"}, {Type::PAWN, Side::BLACK});
     set({"H7"}, {Type::PAWN, Side::BLACK});
+
+    turn_ = Side::WHITE;
   }
 
   void move(Pos fr, Pos to) {
     // board doesn't know chess rules, just having squares and pieces
+    check_move(fr, to);
     std::optional<Piece> piece = get(fr);
-    if (!piece.has_value()) { throw std::range_error("trying to move empty square"); }
     clear(fr);
     // todo: keep captured piece
     set(to, piece.value());
+
+    flip_turn();
   }
 };
 }  // namespace dwc

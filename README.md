@@ -35,7 +35,7 @@ DONE - framework: plugin display func
 DONE - framework: provide APIs
   DONE - internal representation of a move (square 1 to square 2)
   DONE - assert orig square is not empty, replace target square if not empty
-  - add turn state to board, only allow move for correct side ()
+  DONE - add turn state to board, only allow move for correct side (if board is reset)
 - rule: legal moves per piece -> pass board, piece (or pos), return list of Pos (some with eating enemy's piece)
 - move: api for moves
 - framework state: whose turn
