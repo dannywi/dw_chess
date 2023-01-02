@@ -88,6 +88,24 @@ TEST(BOARD, BoardReset) {
   }
 }
 
+TEST(BOARD, BoardMove) {
+  dwc::Board b;
+  b.reset_position();
+
+  // King's Pawn opening
+  b.move({"e2"}, {"e4"});
+  EXPECT_FALSE(b.get({"e2"}).has_value());
+  EXPECT_EQ(b.get({"e4"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::WHITE}));
+
+  // Caro Kann defense
+  b.move({"c7"}, {"c6"});
+  EXPECT_FALSE(b.get({"c7"}).has_value());
+  EXPECT_EQ(b.get({"c6"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::BLACK}));
+
+  EXPECT_THROW(b.move({"h5"}, {"e2"}), std::range_error);
+  dwc::display(b);
+}
+
 TEST(BOARD, TempDisplay) {
   dwc::Board b;
   b.reset_position();

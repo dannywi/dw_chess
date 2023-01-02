@@ -31,9 +31,15 @@ Provide I/O functionalities:
 DONE - framework: setup board class(es) with internal reps
   DONE - setup position, square, piece classes
   DONE - setup board with initial position
-- framework: plugin display func
-- framework: provide APIs
-- rule: legal moves per piece
+DONE - framework: plugin display func
+DONE - framework: provide APIs
+  DONE - internal representation of a move (square 1 to square 2)
+  DONE - assert orig square is not empty, replace target square if not empty
+  - add turn state to board, only allow move for correct side ()
+- rule: legal moves per piece -> pass board, piece (or pos), return list of Pos (some with eating enemy's piece)
+- move: api for moves
+- framework state: whose turn
+- framework state: keep a tally of eaten pieces (clear on reset)
 - rule: consume Framework, provide all legal moves
 - runner: console 2 player engine (command prompt)
 - engine: random engine

@@ -85,5 +85,14 @@ class Board {
     set({"G7"}, {Type::PAWN, Side::BLACK});
     set({"H7"}, {Type::PAWN, Side::BLACK});
   }
+
+  void move(Pos fr, Pos to) {
+    // board doesn't know chess rules, just having squares and pieces
+    std::optional<Piece> piece = get(fr);
+    if (!piece.has_value()) { throw std::range_error("trying to move empty square"); }
+    clear(fr);
+    // todo: keep captured piece
+    set(to, piece.value());
+  }
 };
 }  // namespace dwc
