@@ -4,6 +4,7 @@ cc_library(
         "basic_types.hpp",
         "board.hpp",
         "display.hpp",
+        "legal_move.hpp"
     ],
     visibility = ["//visibility:public"],
 )

@@ -1,10 +1,29 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <map>
 #include <vector>
 
 #include "src/framework/board.hpp"
 #include "src/framework/display.hpp"  // delete
+#include "src/framework/legal_move.hpp"
+
+TEST(BASIC, PieceMappable) {
+  std::vector<dwc::Piece> pieces{
+      {dwc::Type::PAWN, dwc::Side::WHITE},   {dwc::Type::PAWN, dwc::Side::BLACK},
+      {dwc::Type::KNIGHT, dwc::Side::WHITE}, {dwc::Type::KNIGHT, dwc::Side::BLACK},
+      {dwc::Type::BISHOP, dwc::Side::WHITE}, {dwc::Type::BISHOP, dwc::Side::BLACK},
+      {dwc::Type::ROOK, dwc::Side::WHITE},   {dwc::Type::ROOK, dwc::Side::BLACK},
+      {dwc::Type::QUEEN, dwc::Side::WHITE},  {dwc::Type::QUEEN, dwc::Side::BLACK},
+      {dwc::Type::KING, dwc::Side::WHITE},   {dwc::Type::KING, dwc::Side::BLACK},
+  };
+
+  std::map<dwc::Piece, int> map;
+  auto conv_i = [](auto i) { return i * 3; };
+  for (size_t i = 0; i < pieces.size(); ++i) { map[pieces[i]] = conv_i(i); }
+
+  for (size_t i = 0; i < pieces.size(); ++i) { EXPECT_EQ(map[pieces[i]], conv_i(i)); }
+}
 
 TEST(BOARD, BoardEmpty) {
   dwc::Board b;
@@ -93,24 +112,93 @@ TEST(BOARD, BoardMove) {
   b.reset_position();
 
   // King's Pawn opening
-  b.move({"e2"}, {"e4"});
+  b.move({{"e2"}, {"e4"}});
   EXPECT_FALSE(b.get({"e2"}).has_value());
   EXPECT_EQ(b.get({"e4"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::WHITE}));
 
   // Caro Kann defense
-  b.move({"c7"}, {"c6"});
+  b.move({{"c7"}, {"c6"}});
   EXPECT_FALSE(b.get({"c7"}).has_value());
   EXPECT_EQ(b.get({"c6"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::BLACK}));
 
-  EXPECT_THROW(b.move({"h5"}, {"e2"}), std::logic_error);
-  EXPECT_THROW(b.move({"d7"}, {"d5"}), std::logic_error);
+  EXPECT_THROW(b.move({{"h5"}, {"e2"}}), std::logic_error);
+  EXPECT_THROW(b.move({{"d7"}, {"d5"}}), std::logic_error);
 
   dwc::display(b);
 }
 
-TEST(BOARD, TempDisplay) {
+template <typename T, typename CONT>
+bool find_me(CONT cont, T v) {
+  for (auto c : cont) {
+    if (c == v) return true;
+  }
+  return false;
+}
+
+TEST(BOARD, LegalMoves01) {
+  using dwc::legal_move::get_moves;
+
   dwc::Board b;
   b.reset_position();
-  dwc::display(b);
-  EXPECT_TRUE(1);
+
+  // todo: correct this with inital pawn move
+  auto moves = get_moves(b, {"h2"});
+  EXPECT_EQ(moves.size(), 1);
+
+  // most other pieces can't move
+  EXPECT_EQ(get_moves(b, {"e1"}).size(), 0);
+  EXPECT_EQ(get_moves(b, {"d8"}).size(), 0);
+
+  // knights can move
+  moves = get_moves(b, {"b1"});
+  EXPECT_EQ(moves.size(), 2);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"b1"}, {"a3"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"b1"}, {"c3"}}));
+
+  // todo: after legal move checks turns, move a white piece to check this
+  moves = get_moves(b, {"g8"});
+  EXPECT_EQ(moves.size(), 2);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"g8"}, {"h6"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"g8"}, {"f6"}}));
 }
+
+TEST(BOARD, LegalMoves02) {
+  using dwc::legal_move::get_moves;
+
+  dwc::Board b;
+  b.reset_position();
+  b.move({{"e2"}, {"e4"}});
+  b.move({{"e7"}, {"e6"}});
+
+  dwc::display(b);
+
+  // white king can move
+  auto moves = get_moves(b, {"e1"});
+  EXPECT_EQ(moves.size(), 1);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"e1"}, {"e2"}}));
+
+  // white queen can move
+  moves = get_moves(b, {"d1"});
+  EXPECT_EQ(moves.size(), 4);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"e2"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"f3"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"g4"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"h5"}}));
+
+  std::cout << "====== BISHIP ====== " << std::endl;
+  // white bishop can move
+  moves = get_moves(b, {"f1"});
+  EXPECT_EQ(moves.size(), 5);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"e2"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"d3"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"c4"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"b5"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"a6"}}));
+}
+
+// TEST(BOARD, TempDisplay) {
+//   dwc::Board b;
+//   b.reset_position();
+//   dwc::display(b);
+//   EXPECT_TRUE(1);
+// }

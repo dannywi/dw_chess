@@ -8,8 +8,12 @@
 namespace dwc {
 
 struct Pos {
-  uint8_t file;
-  uint8_t rank;
+  // todo: make these different types
+  using FileT = int8_t;
+  using RankT = int8_t;
+  FileT file;
+  RankT rank;
+  Pos(FileT file, RankT rank) : file(file), rank(rank) {}
   Pos(std::string_view pos) {
     auto check_pos = [pos]() { return pos.size() == 2; };
     auto check_file = [pos]() {
@@ -27,12 +31,24 @@ struct Pos {
   }
 
   Pos() = delete;
+
+  bool operator==(const Pos& p) { return file == p.file && rank == p.rank; }
+};
+
+struct Move {
+  Pos fr;
+  Pos to;
+  bool operator==(const Move& m) { return fr == m.fr && to == m.to; }
 };
 
 struct Piece {
   Type type;
   Side side;
   bool operator==(const Piece& p) const { return type == p.type && side == p.side; }
+  bool operator<(const Piece& p) const {
+    auto hasher = [](Piece v) { return cast_t(v.type) * (cast_t(Side::SIZE)) + cast_t(v.side); };
+    return hasher(*this) < hasher(p);
+  }
 };
 
 struct Square {
@@ -50,14 +66,17 @@ class Board {
   }
 
   void check_move(Pos fr, Pos) {
+    // board doesn't know chess rules, just having squares and pieces. These are "physical" valiidations.
     std::optional<Piece> piece = get(fr);
     if (!piece.has_value()) { throw std::logic_error("moving empty square"); }
     if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
   }
 
  public:
+  // todo: make set / clear private, should not allow this access externally
   void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }
   void clear(Pos pos) { board_[pos.file][pos.rank].piece.reset(); }
+
   std::optional<Piece> get(Pos pos) const { return board_[pos.file][pos.rank].piece; }
 
   void reset_position() {
@@ -100,13 +119,12 @@ class Board {
     turn_ = Side::WHITE;
   }
 
-  void move(Pos fr, Pos to) {
-    // board doesn't know chess rules, just having squares and pieces
-    check_move(fr, to);
-    std::optional<Piece> piece = get(fr);
-    clear(fr);
-    // todo: keep captured piece
-    set(to, piece.value());
+  void move(Move move) {
+    check_move(move.fr, move.to);
+    std::optional<Piece> piece = get(move.fr);
+    clear(move.fr);
+    // todo: keep captured piece, per side
+    set(move.to, piece.value());
 
     flip_turn();
   }
