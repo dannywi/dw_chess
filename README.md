@@ -45,10 +45,18 @@ DONE - framework: provide APIs
   DONE - get_legal_move: get piece type, for all directions/limit, move until limit
   DONE - ? move Pos / Type / Square to basic_types
   DONE - pass Board, piece (or pos), return list of Pos (some with eating enemy's piece)
-  - add pawn initially can move 2 squares
-  - state validation: king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
+  DONE - add pawn initially can move 2 squares
+  - add pawn can only take diagonally, and cannot capture with it's normal move
+  - (maybe just remove pawn altogether and create a special function for it)
   - support en passant (another state in board)
-  - support castling (another state in board, queen side + king side)
+  - support castling
+- move validation / state:
+  - king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
+  - rook/king moved -> can't castle on that side
+  - rook/king threatened -> can't castle on that side
+- move - promotion
+- state:
+  - convert "turn" to state { turn_white, turn_black, draw, win_white, win_black }
   - support 50 moves rule (after pawn advance or capture)
   - support 3 repetition draw
 - move: api for moves
@@ -61,5 +69,6 @@ DONE - framework: provide APIs
 - runner: console 1 player with random engine
 
 ### Cleanups
-- include in tests, remove full paths
+- include statement in tests, remove full paths
 - add gha to do buildifier and clang format automatically on commit
+- display should be in it's own folder?

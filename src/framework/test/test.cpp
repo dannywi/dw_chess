@@ -141,9 +141,16 @@ TEST(BOARD, LegalMoves01) {
   dwc::Board b;
   b.reset_position();
 
-  // todo: correct this with inital pawn move
+  // pawn special move
   auto moves = get_moves(b, {"h2"});
-  EXPECT_EQ(moves.size(), 1);
+  EXPECT_EQ(moves.size(), 2);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"h2"}, {"h3"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"h2"}, {"h4"}}));
+
+  moves = get_moves(b, {"b7"});
+  EXPECT_EQ(moves.size(), 2);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"b7"}, {"b6"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"b7"}, {"b5"}}));
 
   // most other pieces can't move
   EXPECT_EQ(get_moves(b, {"e1"}).size(), 0);
@@ -185,7 +192,6 @@ TEST(BOARD, LegalMoves02) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"g4"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"h5"}}));
 
-  std::cout << "====== BISHIP ====== " << std::endl;
   // white bishop can move
   moves = get_moves(b, {"f1"});
   EXPECT_EQ(moves.size(), 5);

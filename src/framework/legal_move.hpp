@@ -44,8 +44,7 @@ using MoverDictT = std::map<dwc::Piece, Mover>;
 MoverDictT get_mover_dict() {
   // todo: make constexpr
   MoverDictT dict;
-  dict[{Type::PAWN, Side::WHITE}] = {{MoveDirection::UP}, MoveLimit::ONCE};
-  dict[{Type::PAWN, Side::BLACK}] = {{MoveDirection::DOWN}, MoveLimit::ONCE};
+  dict[{Type::PAWN, Side::WHITE}] = dict[{Type::PAWN, Side::BLACK}] = {};
   dict[{Type::KING, Side::WHITE}] = dict[{Type::KING, Side::BLACK}] = {{
                                                                            MoveDirection::DOWN,
                                                                            MoveDirection::UP,
@@ -176,16 +175,50 @@ MovesT get_moves_from_mover(const Board& board, Piece piece, Pos pos, Mover move
   return moves;
 }
 
+MovesT get_extra_moves_pawn(Board board, Piece piece, Pos pos) {
+  if (piece.type != Type::PAWN) return {};
+
+  MovesT moves;
+  uint8_t mult = piece.side == Side::WHITE ? 1 : -1;
+
+  auto add_ahead = [&](Pos::RankT rank) {
+    Pos pos_ahead{pos.file, rank};
+    auto ahead = board.get(pos_ahead);
+    if (!ahead.has_value()) { moves.push_back({pos, pos_ahead}); }
+  };
+
+  // basic step
+  add_ahead(pos.rank + mult);
+
+  // one more if starting from second rank
+  if (pos.rank == (piece.side == Side::WHITE ? 1 : 6)) { add_ahead(pos.rank + 2 * mult); }
+  // todo: diagonal captures
+  // todo: en passant
+  // todo: promotion (may need new struct in Move)
+  return moves;
+}
+
+template <typename CONT>
+void insert(CONT& a, const CONT& b) {
+  a.insert(end(a), begin(b), end(b));
+}
+
+MovesT get_extra_moves(Board board, Piece piece, Pos pos) {
+  MovesT moves;
+  insert(moves, get_extra_moves_pawn(board, piece, pos));
+  // todo: castling
+  return moves;
+}
+
 }  // namespace _inner
 
 MovesT get_moves(const Board& board, Pos pos) {
-  MovesT moves;
   auto piece = board.get(pos);
-  if (!piece.has_value()) return moves;
+  if (!piece.has_value()) return {};
   auto dict = _inner::get_mover_dict();
   auto mover = dict[piece.value()];
-  moves = _inner::get_moves_from_mover(board, piece.value(), pos, mover);
-  // todo: check special position and add move (en passant, castling, pawn first move)
+  auto moves = _inner::get_moves_from_mover(board, piece.value(), pos, mover);
+  _inner::insert(moves, _inner::get_extra_moves(board, piece.value(), pos));
   return moves;
 }
 
