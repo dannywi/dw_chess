@@ -1,8 +1,8 @@
 cc_test(
     name = "test_runner",
-    srcs = ["test.cpp"],
+    srcs = ["test_utils.cpp"],
     deps = [
-        "//src/framework",
+        "//src/shared",
         "@googletest//:gtest_main",
     ],
 )

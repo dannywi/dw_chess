@@ -1,62 +1,14 @@
 #pragma once
 
-#include <array>
 #include <optional>
 
 #include "basic_types.hpp"
+#include "fen_lib.hpp"
 
 namespace dwc {
 
-struct Pos {
-  // todo: make these different types
-  using FileT = int8_t;
-  using RankT = int8_t;
-  FileT file;
-  RankT rank;
-  Pos(FileT file, RankT rank) : file(file), rank(rank) {}
-  Pos(std::string_view pos) {
-    auto check_pos = [pos]() { return pos.size() == 2; };
-    auto check_file = [pos]() {
-      auto v = pos[0];
-      return ('a' <= v && v <= 'h') || ('A' <= v && v <= 'H');
-    };
-    auto check_rank = [pos]() {
-      auto v = pos[1];
-      return ('1' <= v && v <= '8');
-    };
-    if (!check_pos() || !check_file() || !check_rank()) { throw std::logic_error("invalid position"); }
-
-    file = pos[0] - (('a' <= pos[0] && pos[0] <= 'h') ? 'a' : 'A');
-    rank = pos[1] - '1';
-  }
-
-  Pos() = delete;
-
-  bool operator==(const Pos& p) { return file == p.file && rank == p.rank; }
-};
-
-struct Move {
-  Pos fr;
-  Pos to;
-  bool operator==(const Move& m) { return fr == m.fr && to == m.to; }
-};
-
-struct Piece {
-  Type type;
-  Side side;
-  bool operator==(const Piece& p) const { return type == p.type && side == p.side; }
-  bool operator<(const Piece& p) const {
-    auto hasher = [](Piece v) { return cast_t(v.type) * (cast_t(Side::SIZE)) + cast_t(v.side); };
-    return hasher(*this) < hasher(p);
-  }
-};
-
-struct Square {
-  std::optional<Piece> piece;
-};
-
 class Board {
-  using BoardT = std::array<std::array<Square, 8>, 8>;
+ private:
   BoardT board_;
   std::optional<Side> turn_;
 
@@ -73,6 +25,12 @@ class Board {
   }
 
  public:
+  Board() {}
+  Board(std::string_view fen) {
+    // todo: split by space and parse each portion
+    board_ = dwc::fen::gen_board_from_fen(fen);
+  }
+
   // todo: make set / clear private, should not allow this access externally
   void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }
   void clear(Pos pos) { board_[pos.file][pos.rank].piece.reset(); }

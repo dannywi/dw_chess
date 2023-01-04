@@ -6,6 +6,7 @@
 
 #include "src/framework/board.hpp"
 #include "src/framework/display.hpp"  // delete
+#include "src/framework/fen_lib.hpp"
 #include "src/framework/legal_move.hpp"
 
 TEST(BASIC, PieceMappable) {
@@ -23,6 +24,18 @@ TEST(BASIC, PieceMappable) {
   for (size_t i = 0; i < pieces.size(); ++i) { map[pieces[i]] = conv_i(i); }
 
   for (size_t i = 0; i < pieces.size(); ++i) { EXPECT_EQ(map[pieces[i]], conv_i(i)); }
+}
+
+TEST(PieceMapping, PieceChar) {
+  std::map<dwc::Piece, char> m = dwc::getPieceCharMap();
+  EXPECT_EQ((m[{dwc::Type::BISHOP, dwc::Side::BLACK}]), 'b');
+  EXPECT_EQ((m[{dwc::Type::QUEEN, dwc::Side::WHITE}]), 'Q');
+}
+
+TEST(PieceMapping, CharPiece) {
+  std::map<char, dwc::Piece> m = dwc::getCharPieceMap();
+  EXPECT_EQ(m['p'], (dwc::Piece{dwc::Type::PAWN, dwc::Side::BLACK}));
+  EXPECT_EQ(m['N'], (dwc::Piece{dwc::Type::KNIGHT, dwc::Side::WHITE}));
 }
 
 TEST(BOARD, BoardEmpty) {
@@ -91,20 +104,36 @@ TEST(BOARD, BadPositions) {
   for (const char* pos_c : {"I1", "a0", "b11", "C9"}) { EXPECT_THROW(dwc::Pos{pos_c}, std::logic_error); }
 }
 
-TEST(BOARD, BoardReset) {
-  dwc::Board b;
-  b.reset_position();
-  EXPECT_EQ(b.get({"B2"}).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::WHITE}));
-  EXPECT_EQ(b.get({"E1"}).value(), (dwc::Piece{dwc::Type::KING, dwc::Side::WHITE}));
-  EXPECT_EQ(b.get({"H8"}).value(), (dwc::Piece{dwc::Type::ROOK, dwc::Side::BLACK}));
-  EXPECT_EQ(b.get({"B8"}).value(), (dwc::Piece{dwc::Type::KNIGHT, dwc::Side::BLACK}));
+namespace test {
+void check_init_pos(const dwc::Board& b) {
+  auto mk_pos = [](char file, char rank) { return dwc::Pos(std::string{file, rank}); };
+
+  for (auto [rank, side] : std::vector<std::tuple<char, dwc::Side>>{{'1', dwc::Side::WHITE}, {'8', dwc::Side::BLACK}}) {
+    EXPECT_EQ(b.get(mk_pos('A', rank)).value(), (dwc::Piece{dwc::Type::ROOK, side}));
+    EXPECT_EQ(b.get(mk_pos('B', rank)).value(), (dwc::Piece{dwc::Type::KNIGHT, side}));
+    EXPECT_EQ(b.get(mk_pos('C', rank)).value(), (dwc::Piece{dwc::Type::BISHOP, side}));
+    EXPECT_EQ(b.get(mk_pos('D', rank)).value(), (dwc::Piece{dwc::Type::QUEEN, side}));
+    EXPECT_EQ(b.get(mk_pos('E', rank)).value(), (dwc::Piece{dwc::Type::KING, side}));
+    EXPECT_EQ(b.get(mk_pos('F', rank)).value(), (dwc::Piece{dwc::Type::BISHOP, side}));
+    EXPECT_EQ(b.get(mk_pos('G', rank)).value(), (dwc::Piece{dwc::Type::KNIGHT, side}));
+    EXPECT_EQ(b.get(mk_pos('H', rank)).value(), (dwc::Piece{dwc::Type::ROOK, side}));
+  }
 
   for (char file : {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}) {
     for (char rank : {'3', '4', '5', '6'}) {
       std::string pos_s{file, rank};
       EXPECT_FALSE(b.get({pos_s}).has_value());
     }
+    EXPECT_EQ(b.get(mk_pos(file, '2')).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::WHITE}));
+    EXPECT_EQ(b.get(mk_pos(file, '7')).value(), (dwc::Piece{dwc::Type::PAWN, dwc::Side::BLACK}));
   }
+}
+}  // namespace test
+
+TEST(BOARD, BoardReset) {
+  dwc::Board b;
+  b.reset_position();
+  test::check_init_pos(b);
 }
 
 TEST(BOARD, BoardMove) {
@@ -231,6 +260,20 @@ TEST(BOARD, LegalMoves03) {
   moves = get_moves(b, {"c4"});
   EXPECT_EQ(moves.size(), 1);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
+}
+
+TEST(BOARD, FenBoardParserException) {
+  EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
+  EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
+  EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/"}, std::runtime_error);
+  EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/4p4/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
+  EXPECT_NO_THROW(dwc::Board{"8/8/8/4p4/2K2Q2/8/8/8"});
+}
+
+TEST(BOARD, FenBoardParser01) {
+  dwc::Board b{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"};
+  dwc::display(b);
+  test::check_init_pos(b);
 }
 
 // TEST(BOARD, TempDisplay) {
