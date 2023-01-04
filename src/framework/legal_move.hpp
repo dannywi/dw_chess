@@ -192,7 +192,20 @@ MovesT get_extra_moves_pawn(Board board, Piece piece, Pos pos) {
 
   // one more if starting from second rank
   if (pos.rank == (piece.side == Side::WHITE ? 1 : 6)) { add_ahead(pos.rank + 2 * mult); }
-  // todo: diagonal captures
+
+  // diagonal capture if possible
+  auto within = [](auto v) { return 0 <= v && v <= 7; };
+  auto inside = [within](Pos pos) { return within(pos.file) && within(pos.rank); };
+  auto has_opp = [&board](Side my_side, Pos pos) {
+    auto p = board.get(pos);
+    return p.has_value() && p->side != my_side;
+  };
+  auto add_capt = [&](Pos pos_cap) {
+    if (inside(pos_cap) && has_opp(piece.side, pos_cap)) moves.push_back({pos, pos_cap});
+  };
+  add_capt({static_cast<Pos::FileT>(pos.file - 1), static_cast<Pos::RankT>(pos.rank + mult)});
+  add_capt({static_cast<Pos::FileT>(pos.file + 1), static_cast<Pos::RankT>(pos.rank + mult)});
+
   // todo: en passant
   // todo: promotion (may need new struct in Move)
   return moves;

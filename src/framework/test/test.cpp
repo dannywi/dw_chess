@@ -202,6 +202,37 @@ TEST(BOARD, LegalMoves02) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"a6"}}));
 }
 
+TEST(BOARD, LegalMoves03) {
+  using dwc::legal_move::get_moves;
+
+  dwc::Board b;
+  b.reset_position();
+  b.move({{"e2"}, {"e4"}});
+  b.move({{"d7"}, {"d5"}});
+  dwc::display(b);
+
+  auto moves = get_moves(b, {"e4"});
+  EXPECT_EQ(moves.size(), 2);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"e5"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"d5"}}));
+
+  b.move({{"c2"}, {"c4"}});
+  dwc::display(b);
+
+  moves = get_moves(b, {"d5"});
+  EXPECT_EQ(moves.size(), 3);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"e4"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"d4"}}));
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"c4"}}));
+
+  b.move({{"c7"}, {"c5"}});
+  dwc::display(b);
+
+  moves = get_moves(b, {"c4"});
+  EXPECT_EQ(moves.size(), 1);
+  EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
+}
+
 // TEST(BOARD, TempDisplay) {
 //   dwc::Board b;
 //   b.reset_position();

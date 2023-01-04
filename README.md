@@ -46,8 +46,7 @@ DONE - framework: provide APIs
   DONE - ? move Pos / Type / Square to basic_types
   DONE - pass Board, piece (or pos), return list of Pos (some with eating enemy's piece)
   DONE - add pawn initially can move 2 squares
-  - add pawn can only take diagonally, and cannot capture with it's normal move
-  - (maybe just remove pawn altogether and create a special function for it)
+  DONE - add pawn can only take diagonally, and cannot capture with it's normal move
   - support en passant (another state in board)
   - support castling
 - move validation / state:
@@ -61,6 +60,8 @@ DONE - framework: provide APIs
   - support 3 repetition draw
 - move: api for moves
 - framework: api for setting board using FEN notation
+  - https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+  - board, turn, castling, en passant, half move, full move
 - framework state: whose turn
 - framework state: keep a tally of eaten pieces (clear on reset)
 - rule: consume Framework, provide all legal moves
