@@ -7,8 +7,8 @@ cc_library(
         "fen_lib.hpp",
         "legal_move.hpp",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         "//src/shared",
     ],
-    visibility = ["//visibility:public"],
 )

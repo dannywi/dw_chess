@@ -98,9 +98,7 @@ std::map<Piece, char> getPieceCharMap() {
 std::map<char, Piece> getCharPieceMap() {
   std::map<Piece, char> inv = getPieceCharMap();
   std::map<char, Piece> map;
-  for(auto v : inv) {
-    map[v.second] = v.first;
-  }
+  for (auto v : inv) { map[v.second] = v.first; }
 
   return map;
 }

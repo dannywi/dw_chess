@@ -1,7 +1,7 @@
 cc_library(
     name = "shared",
     srcs = [
-        "utils.cpp"
+        "utils.cpp",
     ],
     hdrs = [
         "utils.hpp",

@@ -9,10 +9,10 @@
 
 namespace dwc::fen {
 namespace _inner {
-  bool is_fen_num(char c) {
-    return '1' <= c && c <= '8';
-  }
+bool is_fen_num(char c) {
+  return '1' <= c && c <= '8';
 }
+}  // namespace _inner
 dwc::BoardT gen_board_from_fen(std::string_view b_str) {
   dwc::BoardT board;
   auto charPieceMap = getCharPieceMap();
@@ -25,7 +25,7 @@ dwc::BoardT gen_board_from_fen(std::string_view b_str) {
     if (rank_str.size() > 8) throw std::runtime_error("fen board ill formatted - file");
     for (size_t file = 0; file < rank_str.size(); ++file) {
       char c = rank_str.at(file);
-      if(_inner::is_fen_num(c)) {
+      if (_inner::is_fen_num(c)) {
         // if number 1 - 8, then fill in blanks, i.e. skip
         size_t skip_count = static_cast<size_t>(c - '0');
         file += skip_count;
@@ -33,7 +33,7 @@ dwc::BoardT gen_board_from_fen(std::string_view b_str) {
         continue;
       }
       auto it = charPieceMap.find(c);
-      if(it == charPieceMap.end()) throw std::runtime_error("fen board ill formatted - notation");
+      if (it == charPieceMap.end()) throw std::runtime_error("fen board ill formatted - notation");
       board[file][rank] = {it->second};
     }
   }
