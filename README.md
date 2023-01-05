@@ -1,9 +1,14 @@
-# CHESS GAME
-Chess game framework and engine
+# CHESS GAME (WIP)
+Chess game framework and engine library
 
 ## Run Tests
 ```bash
 ./run_tests.sh
+```
+
+## Format Files
+```bash
+./run_format.sh
 ```
 
 ## TODO
@@ -28,25 +33,25 @@ Provide I/O functionalities:
 - ensemble the board + engine + logic
 
 ## TODO
-DONE - framework: setup board class(es) with internal reps
-  DONE - setup position, square, piece classes
-  DONE - setup board with initial position
-DONE - framework: plugin display func
-DONE - framework: provide APIs
-  DONE - internal representation of a move (square 1 to square 2)
-  DONE - assert orig square is not empty, replace target square if not empty
-  DONE - add turn state to board, only allow move for correct side (if board is reset)
+- [DONE] framework: setup board class(es) with internal reps
+  - [DONE] setup position, square, piece classes
+  - [DONE] setup board with initial position
+- [DONE] framework: plugin display func
+- [DONE] framework: provide APIs
+  - [DONE] internal representation of a move (square 1 to square 2)
+  - [DONE] assert orig square is not empty, replace target square if not empty
+  - [DONE] add turn state to board, only allow move for correct side (if board is reset)
 - rule: legal moves per piece
-  DONE - namespace LegalMove
-  DONE - move concepts
-    DONE - direction: up/down/left/right/upleft/downleft/..../kn_upleft/kn_leftup -> map to move arithmetic
-    DONE - limit: once/unlimited
-  DONE - all types have move_characteristic: direction + limit
-  DONE - get_legal_move: get piece type, for all directions/limit, move until limit
-  DONE - ? move Pos / Type / Square to basic_types
-  DONE - pass Board, piece (or pos), return list of Pos (some with eating enemy's piece)
-  DONE - add pawn initially can move 2 squares
-  DONE - add pawn can only take diagonally, and cannot capture with it's normal move
+  - [DONE] namespace LegalMove
+  - [DONE] move concepts
+    - [DONE] direction: up/down/left/right/upleft/downleft/..../kn_upleft/kn_leftup -> map to move arithmetic
+    - [DONE] limit: once/unlimited
+  - [DONE] all types have move_characteristic: direction + limit
+  - [DONE] get_legal_move: get piece type, for all directions/limit, move until limit
+  - [DONE] ? move Pos / Type / Square to basic_types
+  - [DONE] pass Board, piece (or pos), return list of Pos (some with eating enemy's piece)
+  - [DONE] add pawn initially can move 2 squares
+  - [DONE] add pawn can only take diagonally, and cannot capture with it's normal move
   - support en passant (another state in board)
   - support castling (another state in board)
 - move validation / state:
@@ -59,9 +64,8 @@ DONE - framework: provide APIs
   - support 50 moves rule (after pawn advance or capture)
   - support 3 repetition draw
 - move: api for moves
-- framework: api for setting board using FEN notation
-  - https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-  DONE - board
+- framework: api for setting board using FEN notation https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+  - [DONE] board
   - turn, castling, en passant, half move, full move
 - framework state: whose turn
 - framework state: keep a tally of eaten pieces (clear on reset)
@@ -72,7 +76,7 @@ DONE - framework: provide APIs
 
 ### Cleanups
 - include statement in tests, remove full paths
-- add script to run buildifier and clang-format
+- [DONE] add script to run buildifier and clang-format
 - add gha to do buildifier and clang format automatically on commit
 - display should be in it's own folder?
 - replace pragma once with proper macros
