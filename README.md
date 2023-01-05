@@ -53,12 +53,15 @@ Provide I/O functionalities:
   - [DONE] add pawn initially can move 2 squares
   - [DONE] add pawn can only take diagonally, and cannot capture with it's normal move
   - support en passant (another state in board)
+  - support en passant FEN input
   - support castling (another state in board)
+  - support castling FEN input
 - move validation / state:
   - king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
   - rook/king moved -> can't castle on that side
   - rook/king threatened -> can't castle on that side
-- move - pawn promotion
+- move: FEN notation
+- move: pawn promotion
 - state:
   - convert "turn" to state { turn_white, turn_black, draw, win_white, win_black }
   - support 50 moves rule (after pawn advance or capture)
