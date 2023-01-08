@@ -3,6 +3,8 @@
 #include <array>
 #include <map>
 
+#include "src/shared/utils.hpp"
+
 namespace dwc {
 enum class Type : uint8_t {
   PAWN,
@@ -26,9 +28,8 @@ T cast_t(ENUM e) {
 }
 
 struct Pos {
-  // todo: make these different types
-  using FileT = int8_t;
-  using RankT = int8_t;
+  using FileT = utils::TaggedArithmeticT<10, int8_t>;
+  using RankT = utils::TaggedArithmeticT<20, int8_t>;
   FileT file;
   RankT rank;
   Pos(FileT file, RankT rank) : file(file), rank(rank) {}

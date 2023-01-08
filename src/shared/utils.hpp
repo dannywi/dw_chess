@@ -19,7 +19,7 @@ class TaggedArithmeticT {
   T v_;
 
   template <typename U>
-  using conv_check = typename std::enable_if<std::is_arithmetic<U>::value || std::is_fundamental<U>::value>::type;
+  using fund_check = typename std::enable_if<std::is_arithmetic<U>::value || std::is_fundamental<U>::value>::type;
 
  public:
   TaggedArithmeticT() : v_(0) {}
@@ -31,34 +31,55 @@ class TaggedArithmeticT {
   bool operator==(TaggedArithmeticT o) const { return v_ == o.v_; }
 
   // with plain arithmetic type
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
   TaggedArithmeticT operator+(U v) const {
     return v_ + v;
   }
 
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
   TaggedArithmeticT operator-(U v) const {
     return v_ - v;
   }
 
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
   bool operator==(U v) const {
     return v_ == v;
   }
 
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
+  bool operator<(U v) const {
+    return v_ < v;
+  }
+
+  template <typename U, typename = fund_check<U>>
+  bool operator<=(U v) const {
+    return v_ <= v;
+  }
+
+  template <typename U, typename = fund_check<U>>
   friend U operator+(U v, TaggedArithmeticT t) {
     return v + t.v_;
   }
 
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
   friend U operator-(U v, TaggedArithmeticT t) {
     return v - t.v_;
   }
 
-  template <typename U, typename = conv_check<U>>
+  template <typename U, typename = fund_check<U>>
   friend bool operator==(U v, TaggedArithmeticT t) {
     return v == t.v_;
+  }
+
+  template <typename U, typename = fund_check<U>>
+  friend bool operator<=(U v, TaggedArithmeticT t) {
+    return v <= t.v_;
+  }
+
+  // conversion to fundamental
+  template <typename U, typename = fund_check<U>>
+  operator U() const {
+    return static_cast<U>(v_);
   }
 
   // printing util

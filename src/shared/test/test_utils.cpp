@@ -20,7 +20,7 @@ TEST(StringSplit, Variants) {
   EXPECT_EQ(split("////PPPP/AAAA////", "/"), StringVecT({"PPPP", "AAAA"}));
 }
 
-TEST(TaggedArithmeticT, BasicOperator) {
+TEST(TaggedArithmeticT, Operator01) {
   using Type1 = TaggedArithmeticT<1, int8_t>;
   Type1 a{10}, b{-8}, c, d{12};
 
@@ -50,6 +50,14 @@ TEST(TaggedArithmeticT, BasicOperator) {
   EXPECT_FALSE(a == 22);
 }
 
+TEST(TaggedArithmeticT, Operator02) {
+  using Type = TaggedArithmeticT<1, uint64_t>;
+
+  EXPECT_TRUE(Type{10} < 11);
+  EXPECT_TRUE(Type{10} <= 10);
+  EXPECT_TRUE(Type{10} <= 11);
+}
+
 TEST(TaggedArithmeticT, Conversion01) {
   using Type1 = TaggedArithmeticT<8, int16_t>;
   using Type2 = TaggedArithmeticT<9, int16_t>;
@@ -61,6 +69,7 @@ TEST(TaggedArithmeticT, Conversion01) {
 
   // convertible if fundamental type at left
   EXPECT_EQ(3 + Type1{2}, 4 + Type2{1});
+  EXPECT_EQ(3 + Type1{2}, 4 + Type3{1});
 }
 
 TEST(TaggedArithmeticT, Conversion02) {
@@ -68,4 +77,12 @@ TEST(TaggedArithmeticT, Conversion02) {
   using Type2 = TaggedArithmeticT<1, int16_t>;
 
   EXPECT_TRUE((std::is_convertible<Type1, Type2>::value));
+}
+
+TEST(TaggedArithmeticT, Conversion04) {
+  using Type1 = TaggedArithmeticT<4, float>;
+  EXPECT_EQ(Type1{3} + 3, 6);
+
+  int arr[] = {3, 4, 5};
+  EXPECT_EQ(arr[Type1{1}], 4);
 }
