@@ -84,8 +84,12 @@ Provide I/O functionalities:
 - display should be in it's own folder?
 - replace pragma once with proper macros
 - set different namespaces for the header libs
-- make RankT and FileT non-convertible
+- [DONE] make RankT and FileT non-convertible
   - [DONE] create a base in utils, tests
-  - replace implementation in framework
+  - [DONE] replace implementation in framework
 - make MoverDictT (Piece -> Mover) constexpr
+  - create an ordinal for piece (make hasher public)
+  - use the ordinal as key
+  - may need reverse ordinal to get piece from index
 - make MoveDiff constexpr mapping
+- move the character mapping to similar structure

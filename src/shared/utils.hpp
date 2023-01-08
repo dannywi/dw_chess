@@ -15,7 +15,7 @@ StringVecT split(std::string_view str, std::string_view delim);
 // Non-convertible arithmetic type
 template <size_t TAG, typename T = int32_t>
 class TaggedArithmeticT {
-  static_assert(std::is_arithmetic<T>::value);
+  static_assert(std::is_arithmetic<T>::value || std::is_fundamental<T>::value);
   T v_;
 
   template <typename U>
@@ -25,12 +25,13 @@ class TaggedArithmeticT {
   TaggedArithmeticT() : v_(0) {}
   TaggedArithmeticT(T v) : v_(v) {}
 
+  // conversions, only add necessary ones JIT
   // with own type
   TaggedArithmeticT operator+(TaggedArithmeticT o) const { return v_ + o.v_; }
   TaggedArithmeticT operator-(TaggedArithmeticT o) const { return v_ - o.v_; }
   bool operator==(TaggedArithmeticT o) const { return v_ == o.v_; }
 
-  // with plain arithmetic type
+  // with fundamental types
   template <typename U, typename = fund_check<U>>
   TaggedArithmeticT operator+(U v) const {
     return v_ + v;
