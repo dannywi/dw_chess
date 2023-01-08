@@ -84,3 +84,8 @@ Provide I/O functionalities:
 - display should be in it's own folder?
 - replace pragma once with proper macros
 - set different namespaces for the header libs
+- make RankT and FileT non-convertible
+  - [DONE] create a base in utils, tests
+  - replace implementation in framework
+- make MoverDictT (Piece -> Mover) constexpr
+- make MoveDiff constexpr mapping
