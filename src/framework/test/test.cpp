@@ -269,9 +269,10 @@ TEST(BOARD, EnPassant01) {
   dwc::display(b);
 
   // en passant available
-  auto moves = get_moves(b, {"e6"});
-  // EXPECT_EQ(moves.size(), 1);
-  // EXPECT_TRUE(find_me(moves, dwc::Move{{"e6"}, {"e7"}}));
+  // auto moves = get_moves(b, {"e5"});
+  // EXPECT_EQ(moves.size(), 2);
+  // EXPECT_TRUE(find_me(moves, dwc::Move{{"e5"}, {"e6"}}));
+  // EXPECT_TRUE(find_me(moves, dwc::Move{{"e5"}, {"d6"}}));  // en passant
 }
 
 TEST(BOARD, FenBoardParserException01) {
@@ -295,6 +296,13 @@ TEST(BOARD, FenBoardParser01) {
   dwc::Board b{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"};
   // dwc::display(b);
   test::check_init_pos(b);
+}
+
+TEST(BOARD, FenBoardParser02) {
+  EXPECT_EQ(dwc::fen::_inner::parse_side("w").value(), dwc::Side::WHITE);
+  EXPECT_EQ(dwc::fen::_inner::parse_side("b").value(), dwc::Side::BLACK);
+  EXPECT_THROW(dwc::fen::_inner::parse_side("bw").value(), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_side("a").value(), std::runtime_error);
 }
 
 // TEST(BOARD, TempDisplay) {

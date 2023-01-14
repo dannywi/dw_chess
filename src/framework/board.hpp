@@ -24,13 +24,16 @@ class Board {
     if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
   }
 
- public:
-  Board() {}
-  Board(std::string_view fen_str) {
+  void init(std::string_view fen_str) {
     dwc::fen::FenParser fp(fen_str);
     board_ = fp.get_board_pos();
     turn_ = fp.get_turn_side();
+    if (!turn_.has_value()) turn_ = Side::WHITE;
   }
+
+ public:
+  Board() {}
+  Board(std::string_view fen_str) { init(fen_str); }
 
   // todo: make set / clear private, should not allow this access externally
   void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }
@@ -38,45 +41,7 @@ class Board {
 
   std::optional<Piece> get(Pos pos) const { return board_[pos.file][pos.rank].piece; }
 
-  void reset_position() {
-    set({"A1"}, {Type::ROOK, Side::WHITE});
-    set({"B1"}, {Type::KNIGHT, Side::WHITE});
-    set({"C1"}, {Type::BISHOP, Side::WHITE});
-    set({"D1"}, {Type::QUEEN, Side::WHITE});
-    set({"E1"}, {Type::KING, Side::WHITE});
-    set({"F1"}, {Type::BISHOP, Side::WHITE});
-    set({"G1"}, {Type::KNIGHT, Side::WHITE});
-    set({"H1"}, {Type::ROOK, Side::WHITE});
-
-    set({"A2"}, {Type::PAWN, Side::WHITE});
-    set({"B2"}, {Type::PAWN, Side::WHITE});
-    set({"C2"}, {Type::PAWN, Side::WHITE});
-    set({"D2"}, {Type::PAWN, Side::WHITE});
-    set({"E2"}, {Type::PAWN, Side::WHITE});
-    set({"F2"}, {Type::PAWN, Side::WHITE});
-    set({"G2"}, {Type::PAWN, Side::WHITE});
-    set({"H2"}, {Type::PAWN, Side::WHITE});
-
-    set({"A8"}, {Type::ROOK, Side::BLACK});
-    set({"B8"}, {Type::KNIGHT, Side::BLACK});
-    set({"C8"}, {Type::BISHOP, Side::BLACK});
-    set({"D8"}, {Type::QUEEN, Side::BLACK});
-    set({"E8"}, {Type::KING, Side::BLACK});
-    set({"F8"}, {Type::BISHOP, Side::BLACK});
-    set({"G8"}, {Type::KNIGHT, Side::BLACK});
-    set({"H8"}, {Type::ROOK, Side::BLACK});
-
-    set({"A7"}, {Type::PAWN, Side::BLACK});
-    set({"B7"}, {Type::PAWN, Side::BLACK});
-    set({"C7"}, {Type::PAWN, Side::BLACK});
-    set({"D7"}, {Type::PAWN, Side::BLACK});
-    set({"E7"}, {Type::PAWN, Side::BLACK});
-    set({"F7"}, {Type::PAWN, Side::BLACK});
-    set({"G7"}, {Type::PAWN, Side::BLACK});
-    set({"H7"}, {Type::PAWN, Side::BLACK});
-
-    turn_ = Side::WHITE;
-  }
+  void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"); }
 
   void move(Move move) {
     check_move(move.fr, move.to);
@@ -87,7 +52,5 @@ class Board {
 
     flip_turn();
   }
-
-  // void set_board(BoardT b) { board_ = b; }
 };
 }  // namespace dwc
