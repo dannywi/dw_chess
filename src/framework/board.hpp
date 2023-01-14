@@ -18,7 +18,7 @@ class Board {
   }
 
   void check_move(Pos fr, Pos) {
-    // board doesn't know chess rules, just having squares and pieces. These are "physical" valiidations.
+    // board doesn't know chess rules, just having squares and pieces. These are "physical" validations.
     std::optional<Piece> piece = get(fr);
     if (!piece.has_value()) { throw std::logic_error("moving empty square"); }
     if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
@@ -26,9 +26,10 @@ class Board {
 
  public:
   Board() {}
-  Board(std::string_view fen) {
-    // todo: split by space and parse each portion
-    board_ = dwc::fen::gen_board_from_fen(fen);
+  Board(std::string_view fen_str) {
+    dwc::fen::FenParser fp(fen_str);
+    board_ = fp.get_board_pos();
+    turn_ = fp.get_turn_side();
   }
 
   // todo: make set / clear private, should not allow this access externally
@@ -86,5 +87,7 @@ class Board {
 
     flip_turn();
   }
+
+  // void set_board(BoardT b) { board_ = b; }
 };
 }  // namespace dwc

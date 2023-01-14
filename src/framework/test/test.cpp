@@ -264,7 +264,7 @@ TEST(BOARD, LegalMoves03) {
 
 TEST(BOARD, EnPassant01) {
   using dwc::legal_move::get_moves;
-  dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR"};
+  dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR b"};
   b.move({{"d7"}, {"d5"}});
   dwc::display(b);
 
@@ -274,12 +274,21 @@ TEST(BOARD, EnPassant01) {
   // EXPECT_TRUE(find_me(moves, dwc::Move{{"e6"}, {"e7"}}));
 }
 
-TEST(BOARD, FenBoardParserException) {
+TEST(BOARD, FenBoardParserException01) {
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/"}, std::runtime_error);
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/4p4/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
   EXPECT_NO_THROW(dwc::Board{"8/8/8/4p3/2K2Q2/8/8/8"});
+}
+
+TEST(BOARD, FenBoardParserException02) {
+  EXPECT_THROW(dwc::Board{"8/8/8/4p3/2K2Q2/8/8/8 w 123"}, std::runtime_error);  // more than available parser
+}
+
+TEST(BOARD, FenBoardParserException03) {
+  dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR w"};
+  EXPECT_THROW(b.move({{"d7"}, {"d5"}}), std::logic_error);  // wrong side move
 }
 
 TEST(BOARD, FenBoardParser01) {

@@ -62,8 +62,8 @@ Provide I/O functionalities:
   - rook/king threatened -> can't castle on that side
 - move: FEN notation
   - [DONE] support piece placement
-  - support multiple segments
-  - support turn
+  - [DONE] support multiple segments
+  - [DONE] support turn
   - support castling
   - support en passant
   - support half move, max 50
