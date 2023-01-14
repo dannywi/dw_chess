@@ -37,6 +37,7 @@ enum class MoveLimit : uint8_t {
 
 struct Mover {
   // todo: error-prone if used with array::size(), encapsulate
+  // if MoveDirections is a class, then maybe get_mover_dict can be a constexpr switch statement
   std::array<MoveDirection, 8> directions;
   size_t directions_size{0};
   MoveLimit limit{MoveLimit::ONCE};
@@ -110,10 +111,10 @@ constexpr MoverDictT get_mover_dict() {
 struct MoveDiff {
   Pos::FileT file;
   Pos::RankT rank;
+  constexpr MoveDiff(Pos::FileT f, Pos::RankT r) : file(f), rank(r) {}
 };
 
-// todo: make this constexpr
-MoveDiff get_move_diff(MoveDirection md) {
+constexpr MoveDiff get_move_diff(MoveDirection md) {
   switch (md) {
     case MoveDirection::UP:
       return {0, 1};

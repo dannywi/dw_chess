@@ -22,8 +22,8 @@ class TaggedArithmeticT {
   using fund_check = typename std::enable_if<std::is_arithmetic<U>::value || std::is_fundamental<U>::value>::type;
 
  public:
-  TaggedArithmeticT() : v_(0) {}
-  TaggedArithmeticT(T v) : v_(v) {}
+  constexpr TaggedArithmeticT() : v_(0) {}
+  constexpr TaggedArithmeticT(T v) : v_(v) {}
 
   // conversions, only add necessary ones JIT
   // with own type
