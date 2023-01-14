@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <iostream>  // delete
 #include <map>
 #include <vector>
@@ -35,63 +36,74 @@ enum class MoveLimit : uint8_t {
 };
 
 struct Mover {
-  std::vector<MoveDirection> directions;
-  MoveLimit limit;
+  // todo: error-prone if used with array::size(), encapsulate
+  std::array<MoveDirection, 8> directions;
+  size_t directions_size{0};
+  MoveLimit limit{MoveLimit::ONCE};
 };
 
-using MoverDictT = std::map<dwc::Piece, Mover>;
+using MoverDictT = std::array<Mover, cast_t(Type::SIZE) * cast_t(Side::SIZE)>;
 
-MoverDictT get_mover_dict() {
-  // todo: make constexpr
-  MoverDictT dict;
-  dict[{Type::PAWN, Side::WHITE}] = dict[{Type::PAWN, Side::BLACK}] = {};
-  dict[{Type::KING, Side::WHITE}] = dict[{Type::KING, Side::BLACK}] = {{
-                                                                           MoveDirection::DOWN,
-                                                                           MoveDirection::UP,
-                                                                           MoveDirection::LEFT,
-                                                                           MoveDirection::RIGHT,
-                                                                           MoveDirection::UPLEFT,
-                                                                           MoveDirection::UPRIGHT,
-                                                                           MoveDirection::DOWNLEFT,
-                                                                           MoveDirection::DOWNRIGHT,
-                                                                       },
-                                                                       MoveLimit::ONCE};
-  dict[{Type::QUEEN, Side::WHITE}] = dict[{Type::QUEEN, Side::BLACK}] = {{
-                                                                             MoveDirection::DOWN,
-                                                                             MoveDirection::UP,
-                                                                             MoveDirection::LEFT,
-                                                                             MoveDirection::RIGHT,
-                                                                             MoveDirection::UPLEFT,
-                                                                             MoveDirection::UPRIGHT,
-                                                                             MoveDirection::DOWNLEFT,
-                                                                             MoveDirection::DOWNRIGHT,
-                                                                         },
-                                                                         MoveLimit::UNLIMITED};
-  dict[{Type::BISHOP, Side::WHITE}] = dict[{Type::BISHOP, Side::BLACK}] = {{
-                                                                               MoveDirection::UPLEFT,
-                                                                               MoveDirection::UPRIGHT,
-                                                                               MoveDirection::DOWNLEFT,
-                                                                               MoveDirection::DOWNRIGHT,
-                                                                           },
-                                                                           MoveLimit::UNLIMITED};
-  dict[{Type::KNIGHT, Side::WHITE}] = dict[{Type::KNIGHT, Side::BLACK}] = {{
-                                                                               MoveDirection::KN_UPLEFT,
-                                                                               MoveDirection::KN_LEFTUP,
-                                                                               MoveDirection::KN_UPRIGHT,
-                                                                               MoveDirection::KN_RIGHTUP,
-                                                                               MoveDirection::KN_DOWNLEFT,
-                                                                               MoveDirection::KN_LEFTDOWN,
-                                                                               MoveDirection::KN_DOWNRIGHT,
-                                                                               MoveDirection::KN_RIGHTDOWN,
-                                                                           },
-                                                                           MoveLimit::ONCE};
-  dict[{Type::ROOK, Side::WHITE}] = dict[{Type::ROOK, Side::BLACK}] = {{
-                                                                           MoveDirection::DOWN,
-                                                                           MoveDirection::UP,
-                                                                           MoveDirection::LEFT,
-                                                                           MoveDirection::RIGHT,
-                                                                       },
-                                                                       MoveLimit::UNLIMITED};
+constexpr MoverDictT get_mover_dict() {
+  MoverDictT dict{};
+  dict[Piece{Type::PAWN, Side::WHITE}.ordinal()] = dict[Piece{Type::PAWN, Side::BLACK}.ordinal()] = Mover{};
+  dict[Piece{Type::KING, Side::WHITE}.ordinal()] = dict[Piece{Type::KING, Side::BLACK}.ordinal()] =
+      Mover{{
+                MoveDirection::DOWN,
+                MoveDirection::UP,
+                MoveDirection::LEFT,
+                MoveDirection::RIGHT,
+                MoveDirection::UPLEFT,
+                MoveDirection::UPRIGHT,
+                MoveDirection::DOWNLEFT,
+                MoveDirection::DOWNRIGHT,
+            },
+            8,
+            MoveLimit::ONCE};
+  dict[Piece{Type::QUEEN, Side::WHITE}.ordinal()] = dict[Piece{Type::QUEEN, Side::BLACK}.ordinal()] =
+      Mover{{
+                MoveDirection::DOWN,
+                MoveDirection::UP,
+                MoveDirection::LEFT,
+                MoveDirection::RIGHT,
+                MoveDirection::UPLEFT,
+                MoveDirection::UPRIGHT,
+                MoveDirection::DOWNLEFT,
+                MoveDirection::DOWNRIGHT,
+            },
+            8,
+            MoveLimit::UNLIMITED};
+  dict[Piece{Type::BISHOP, Side::WHITE}.ordinal()] =
+      dict[Piece{Type::BISHOP, Side::BLACK}.ordinal()] = {{
+                                                              MoveDirection::UPLEFT,
+                                                              MoveDirection::UPRIGHT,
+                                                              MoveDirection::DOWNLEFT,
+                                                              MoveDirection::DOWNRIGHT,
+                                                          },
+                                                          4,
+                                                          MoveLimit::UNLIMITED};
+  dict[Piece{Type::KNIGHT, Side::WHITE}.ordinal()] =
+      dict[Piece{Type::KNIGHT, Side::BLACK}.ordinal()] = {{
+                                                              MoveDirection::KN_UPLEFT,
+                                                              MoveDirection::KN_LEFTUP,
+                                                              MoveDirection::KN_UPRIGHT,
+                                                              MoveDirection::KN_RIGHTUP,
+                                                              MoveDirection::KN_DOWNLEFT,
+                                                              MoveDirection::KN_LEFTDOWN,
+                                                              MoveDirection::KN_DOWNRIGHT,
+                                                              MoveDirection::KN_RIGHTDOWN,
+                                                          },
+                                                          8,
+                                                          MoveLimit::ONCE};
+  dict[Piece{Type::ROOK, Side::WHITE}.ordinal()] =
+      dict[Piece{Type::ROOK, Side::BLACK}.ordinal()] = {{
+                                                            MoveDirection::DOWN,
+                                                            MoveDirection::UP,
+                                                            MoveDirection::LEFT,
+                                                            MoveDirection::RIGHT,
+                                                        },
+                                                        4,
+                                                        MoveLimit::UNLIMITED};
   return dict;
 }
 
@@ -100,6 +112,7 @@ struct MoveDiff {
   Pos::RankT rank;
 };
 
+// todo: make this constexpr
 MoveDiff get_move_diff(MoveDirection md) {
   switch (md) {
     case MoveDirection::UP:
@@ -157,8 +170,8 @@ bool can_move(const Board& board, Piece piece, Pos pos, MoveDiff md) {
 
 MovesT get_moves_from_mover(const Board& board, Piece piece, Pos pos, Mover mover) {
   MovesT moves;
-  for (auto dir : mover.directions) {
-    MoveDiff md = get_move_diff(dir);
+  for (size_t i = 0; i < mover.directions_size; ++i) {
+    MoveDiff md = get_move_diff(mover.directions[i]);
     Pos curr_pos = pos;
     size_t limit = mover.limit == MoveLimit::ONCE ? 1 : 8;
     for (size_t i = 0; i < limit; ++i) {
@@ -229,7 +242,7 @@ MovesT get_moves(const Board& board, Pos pos) {
   auto piece = board.get(pos);
   if (!piece.has_value()) return {};
   auto dict = _inner::get_mover_dict();
-  auto mover = dict[piece.value()];
+  auto mover = dict[piece.value().ordinal()];
   auto moves = _inner::get_moves_from_mover(board, piece.value(), pos, mover);
   _inner::insert(moves, _inner::get_extra_moves(board, piece.value(), pos));
   return moves;

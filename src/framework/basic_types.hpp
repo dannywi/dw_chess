@@ -23,7 +23,7 @@ enum class Side : uint8_t {
 };
 
 template <typename ENUM, typename T = size_t>
-T cast_t(ENUM e) {
+constexpr T cast_t(ENUM e) {
   return static_cast<T>(e);
 }
 
@@ -63,11 +63,11 @@ struct Move {
 struct Piece {
   Type type;
   Side side;
-  bool operator==(const Piece& p) const { return type == p.type && side == p.side; }
-  bool operator<(const Piece& p) const {
-    auto hasher = [](Piece v) { return cast_t(v.type) * (cast_t(Side::SIZE)) + cast_t(v.side); };
-    return hasher(*this) < hasher(p);
-  }
+  bool operator==(const Piece& p) const { return ordinal() == p.ordinal(); }
+  bool operator<(const Piece& p) const { return ordinal() < p.ordinal(); }
+
+  using ordinal_t = size_t;
+  constexpr ordinal_t ordinal() const { return cast_t(type) * (cast_t(Side::SIZE)) + cast_t(side); }
 };
 
 struct Square {
