@@ -76,6 +76,18 @@ struct Square {
 
 using BoardT = std::array<std::array<Square, 8>, 8>;
 
+namespace board_ut {
+void set(Pos pos, Piece piece, BoardT& board) {
+  board[pos.file][pos.rank].piece = piece;
+}
+void clear(Pos pos, BoardT& board) {
+  board[pos.file][pos.rank].piece.reset();
+}
+std::optional<Piece> get(Pos pos, const BoardT& board) {
+  return board[pos.file][pos.rank].piece;
+}
+}  // namespace board_ut
+
 std::map<Piece, char> getPieceCharMap() {
   std::map<Piece, char> map;
 

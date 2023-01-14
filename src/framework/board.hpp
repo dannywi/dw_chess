@@ -24,22 +24,20 @@ class Board {
     if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
   }
 
+  void set(Pos pos, Piece piece) { board_ut::set(pos, piece, board_); }
+  void clear(Pos pos) { board_ut::clear(pos, board_); }
+
   void init(std::string_view fen_str) {
     dwc::fen::FenParser fp(fen_str);
     board_ = fp.get_board_pos();
-    turn_ = fp.get_turn_side();
-    if (!turn_.has_value()) turn_ = Side::WHITE;
+    turn_ = fp.get_turn_side().value_or(Side::WHITE);
   }
 
  public:
   Board() {}
   Board(std::string_view fen_str) { init(fen_str); }
 
-  // todo: make set / clear private, should not allow this access externally
-  void set(Pos pos, Piece piece) { board_[pos.file][pos.rank].piece = piece; }
-  void clear(Pos pos) { board_[pos.file][pos.rank].piece.reset(); }
-
-  std::optional<Piece> get(Pos pos) const { return board_[pos.file][pos.rank].piece; }
+  std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, board_); }
 
   void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"); }
 

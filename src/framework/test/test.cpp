@@ -49,15 +49,15 @@ TEST(BOARD, BoardEmpty) {
 }
 
 TEST(BOARD, BoardClear) {
-  dwc::Board b;
+  dwc::BoardT board;
   const char* pos_c = "c7";
-  EXPECT_FALSE(b.get({pos_c}).has_value());
+  EXPECT_FALSE(dwc::board_ut::get({pos_c}, board).has_value());
   dwc::Piece p{dwc::Type::BISHOP, dwc::Side::WHITE};
-  b.set({pos_c}, p);
-  EXPECT_TRUE(b.get({pos_c}).has_value());
-  EXPECT_EQ(b.get({pos_c}).value(), p);
-  b.clear({pos_c});
-  EXPECT_FALSE(b.get({pos_c}).has_value());
+  dwc::board_ut::set({pos_c}, p, board);
+  EXPECT_TRUE(dwc::board_ut::get({pos_c}, board).has_value());
+  EXPECT_EQ(dwc::board_ut::get({pos_c}, board).value(), p);
+  dwc::board_ut::clear({pos_c}, board);
+  EXPECT_FALSE(dwc::board_ut::get({pos_c}, board).has_value());
 }
 
 TEST(BOARD, BoardSettings) {
@@ -73,12 +73,12 @@ TEST(BOARD, BoardSettings) {
       {"H8", dwc::Type::BISHOP, dwc::Side::BLACK},
   };
 
-  dwc::Board b;
+  dwc::BoardT board;
   for (auto t : tests) {
-    b.set({t.pos_c}, {t.type, t.side});
-    EXPECT_TRUE(b.get({t.pos_c}).has_value());
-    EXPECT_EQ(b.get({t.pos_c}).value().side, t.side);
-    EXPECT_EQ(b.get({t.pos_c}).value().type, t.type);
+    dwc::board_ut::set({t.pos_c}, {t.type, t.side}, board);
+    EXPECT_TRUE(dwc::board_ut::get({t.pos_c}, board).has_value());
+    EXPECT_EQ(dwc::board_ut::get({t.pos_c}, board).value().side, t.side);
+    EXPECT_EQ(dwc::board_ut::get({t.pos_c}, board).value().type, t.type);
   }
 }
 
