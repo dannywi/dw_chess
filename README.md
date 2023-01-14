@@ -61,6 +61,12 @@ Provide I/O functionalities:
   - rook/king moved -> can't castle on that side
   - rook/king threatened -> can't castle on that side
 - move: FEN notation
+  - [DONE] support piece placement
+  - support multiple segments
+  - support turn
+  - support castling
+  - support en passant
+  - support half move, max 50
 - move: pawn promotion
 - state:
   - convert "turn" to state { turn_white, turn_black, draw, win_white, win_black }
@@ -87,9 +93,9 @@ Provide I/O functionalities:
 - [DONE] make RankT and FileT non-convertible
   - [DONE] create a base in utils, tests
   - [DONE] replace implementation in framework
-- make MoverDictT (Piece -> Mover) constexpr
+- [DONE] make MoverDictT (Piece -> Mover) constexpr
   - create an ordinal for piece (make hasher public)
   - use the ordinal as key
   - may need reverse ordinal to get piece from index
-- make MoveDiff constexpr mapping
+- [DONE] make MoveDiff constexpr mapping
 - move the character mapping to similar structure

@@ -153,7 +153,7 @@ TEST(BOARD, BoardMove) {
   EXPECT_THROW(b.move({{"h5"}, {"e2"}}), std::logic_error);
   EXPECT_THROW(b.move({{"d7"}, {"d5"}}), std::logic_error);
 
-  dwc::display(b);
+  // dwc::display(b);
 }
 
 template <typename T, typename CONT>
@@ -206,7 +206,7 @@ TEST(BOARD, LegalMoves02) {
   b.move({{"e2"}, {"e4"}});
   b.move({{"e7"}, {"e6"}});
 
-  dwc::display(b);
+  // dwc::display(b);
 
   // white king can move
   auto moves = get_moves(b, {"e1"});
@@ -238,7 +238,7 @@ TEST(BOARD, LegalMoves03) {
   b.reset_position();
   b.move({{"e2"}, {"e4"}});
   b.move({{"d7"}, {"d5"}});
-  dwc::display(b);
+  // dwc::display(b);
 
   auto moves = get_moves(b, {"e4"});
   EXPECT_EQ(moves.size(), 2);
@@ -246,7 +246,7 @@ TEST(BOARD, LegalMoves03) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"d5"}}));
 
   b.move({{"c2"}, {"c4"}});
-  dwc::display(b);
+  // dwc::display(b);
 
   moves = get_moves(b, {"d5"});
   EXPECT_EQ(moves.size(), 3);
@@ -255,11 +255,23 @@ TEST(BOARD, LegalMoves03) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"c4"}}));
 
   b.move({{"c7"}, {"c5"}});
-  dwc::display(b);
+  // dwc::display(b);
 
   moves = get_moves(b, {"c4"});
   EXPECT_EQ(moves.size(), 1);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
+}
+
+TEST(BOARD, EnPassant01) {
+  using dwc::legal_move::get_moves;
+  dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR"};
+  b.move({{"d7"}, {"d5"}});
+  dwc::display(b);
+
+  // en passant available
+  auto moves = get_moves(b, {"e6"});
+  // EXPECT_EQ(moves.size(), 1);
+  // EXPECT_TRUE(find_me(moves, dwc::Move{{"e6"}, {"e7"}}));
 }
 
 TEST(BOARD, FenBoardParserException) {
@@ -267,12 +279,12 @@ TEST(BOARD, FenBoardParserException) {
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/9/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/"}, std::runtime_error);
   EXPECT_THROW(dwc::Board{"rnbqkbnrr/pppppppp/4p4/8/8/8/PPPPPPPP/RNBQKBNR"}, std::runtime_error);
-  EXPECT_NO_THROW(dwc::Board{"8/8/8/4p4/2K2Q2/8/8/8"});
+  EXPECT_NO_THROW(dwc::Board{"8/8/8/4p3/2K2Q2/8/8/8"});
 }
 
 TEST(BOARD, FenBoardParser01) {
   dwc::Board b{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"};
-  dwc::display(b);
+  // dwc::display(b);
   test::check_init_pos(b);
 }
 
