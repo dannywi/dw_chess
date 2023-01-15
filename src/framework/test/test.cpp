@@ -262,6 +262,21 @@ TEST(BOARD, LegalMoves03) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
 }
 
+TEST(BOARD, LegalMoves04) {
+  using dwc::legal_move::get_moves;
+
+  dwc::Board b;
+  b.reset_position();
+
+  EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"h2"}, {{"h2"}, {"h3"}}));
+  EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"h2"}, {{"h2"}, {"h4"}}));
+  EXPECT_FALSE(dwc::legal_move::is_legal_move(b, {"h2"}, {{"h2"}, {"h5"}}));
+
+  EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"b1"}, {{"b1"}, {"a3"}}));
+  EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"b1"}, {{"b1"}, {"c3"}}));
+  EXPECT_FALSE(dwc::legal_move::is_legal_move(b, {"b1"}, {{"b1"}, {"d3"}}));
+}
+
 TEST(BOARD, EnPassant01) {
   using dwc::legal_move::get_moves;
   dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR b"};

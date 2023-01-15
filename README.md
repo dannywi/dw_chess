@@ -52,10 +52,12 @@ Provide I/O functionalities:
   - [DONE] pass Board, piece (or pos), return list of Pos (some with eating enemy's piece)
   - [DONE] add pawn initially can move 2 squares
   - [DONE] add pawn can only take diagonally, and cannot capture with it's normal move
-  - support en passant (another state in board)
-  - support en passant FEN input
+  - [DONE] on move, throw if it's not within legal move
   - support castling (another state in board)
-  - support castling FEN input
+    - add state (vector of Piece KQkq)
+    - add extra move
+    - on move, remove the castling entry afterwards
+  - support en passant (another state in board)
 - move validation / state:
   - king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
   - rook/king moved -> can't castle on that side

@@ -249,4 +249,12 @@ MovesT get_moves(const Board& board, Pos pos) {
   return moves;
 }
 
+bool is_legal_move(const Board& board, Pos pos, Move move) {
+  auto moves = get_moves(board, pos);
+  for (auto m : moves) {
+    if (m == move) return true;
+  }
+  return false;
+}
+
 }  // namespace dwc::legal_move

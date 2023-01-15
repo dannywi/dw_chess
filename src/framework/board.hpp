@@ -17,12 +17,7 @@ class Board {
     turn_ = turn_.value() == Side::WHITE ? Side::BLACK : Side::WHITE;
   }
 
-  void check_move(Pos fr, Pos) {
-    // board doesn't know chess rules, just having squares and pieces. These are "physical" validations.
-    std::optional<Piece> piece = get(fr);
-    if (!piece.has_value()) { throw std::logic_error("moving empty square"); }
-    if (turn_.has_value() && piece.value().side != turn_.value()) { throw std::logic_error("moving wrong side"); }
-  }
+  void check_move(Pos fr, Pos to) const;
 
   void set(Pos pos, Piece piece) { board_ut::set(pos, piece, board_); }
   void clear(Pos pos) { board_ut::clear(pos, board_); }

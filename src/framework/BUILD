@@ -2,6 +2,7 @@ cc_library(
     name = "framework",
     srcs = [
         "basic_types.hpp",
+        "board.cpp",
         "board.hpp",
         "display.hpp",
         "fen_lib.hpp",
