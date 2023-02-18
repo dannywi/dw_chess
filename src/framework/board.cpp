@@ -21,6 +21,9 @@ MovesT Board::get_moves(Pos pos) const {
   auto moves = legal_move::_inner::get_moves_from_mover(*this, piece.value(), pos, mover);
   legal_move::_inner::insert(moves, legal_move::_inner::get_extra_moves(*this, piece.value(), pos));
 
+  // todo: avoid creating temp objects
+  call_movers(pos, moves, legal_move::MoverPawnAhead{});
+
   return moves;
 }
 }  // namespace dwc

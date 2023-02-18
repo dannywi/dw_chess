@@ -57,9 +57,9 @@ Provide I/O functionalities:
   - [DONE] move MovesT to basic_types
   - special move abstraction:
     - after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
-    - add legal move, pass state and position - castling: add castling, en passant: add en passant
-  - first use the concept for pawn first move (doesn't need state) - remove get_extra_moves_pawn
-  - use for pawn diagonal take, etc.
+    - [DONE] add legal move, pass state and position (separate classes for enpassant, castling, ...)
+  - [DONE] first use the concept for pawn ahead move (doesn't need state) - remove from get_extra_moves_pawn
+  - use for pawn diagonal take, completely remove get_extra_moves_pawn
   - use for change turn
   - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - support castling (another state in board)

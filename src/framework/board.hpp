@@ -48,5 +48,14 @@ class Board {
   const State& get_state() const { return state_; }
 
   MovesT get_moves(Pos pos) const;
+
+  template <class T, class... REST>
+  void call_movers(Pos pos, MovesT& moves, T, REST... rest) const {
+    MovesT res = T::get_moves(*this, pos);
+    moves.insert(end(moves), begin(res), end(res));
+    call_movers(pos, moves, rest...);
+  }
+
+  void call_movers(Pos pos, MovesT& moves) const {}
 };
 }  // namespace dwc

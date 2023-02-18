@@ -53,12 +53,22 @@ struct Pos {
   Pos() = delete;
 
   bool operator==(const Pos& p) { return file == p.file && rank == p.rank; }
+
+  friend std::ostream& operator<<(std::ostream& os, dwc::Pos pos) {
+    os << "{" << ('a' + pos.file) << pos.rank + 1 << "}";
+    return os;
+  }
 };
 
 struct Move {
   Pos fr;
   Pos to;
   bool operator==(const Move& m) { return fr == m.fr && to == m.to; }
+
+  friend std::ostream& operator<<(std::ostream& os, const dwc::Move& move) {
+    os << move.fr << " -> " << move.to;
+    return os;
+  }
 };
 
 using MovesT = std::vector<Move>;
