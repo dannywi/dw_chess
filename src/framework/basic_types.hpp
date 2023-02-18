@@ -61,6 +61,8 @@ struct Move {
   bool operator==(const Move& m) { return fr == m.fr && to == m.to; }
 };
 
+using MovesT = std::vector<Move>;
+
 struct Piece {
   Type type;
   Side side;

@@ -44,5 +44,9 @@ class Board {
 
     flip_turn();
   }
+
+  const State& get_state() const { return state_; }
+
+  MovesT get_moves(Pos pos) const;
 };
 }  // namespace dwc

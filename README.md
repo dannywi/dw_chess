@@ -54,12 +54,14 @@ Provide I/O functionalities:
   - [DONE] add pawn can only take diagonally, and cannot capture with it's normal move
   - [DONE] on move, throw if it's not within legal move
   - [DONE] decouple State: create a State struct that has board, enpassant pos, castling condition, half move, turn
+  - [DONE] move MovesT to basic_types
   - special move abstraction:
     - after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
     - add legal move, pass state and position - castling: add castling, en passant: add en passant
   - first use the concept for pawn first move (doesn't need state) - remove get_extra_moves_pawn
   - use for pawn diagonal take, etc.
   - use for change turn
+  - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - support castling (another state in board)
     - add state (class for KQkq)
     - add extra move
