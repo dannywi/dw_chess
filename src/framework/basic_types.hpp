@@ -2,6 +2,7 @@
 
 #include <array>
 #include <map>
+#include <optional>
 
 #include "src/shared/utils.hpp"
 
@@ -115,5 +116,10 @@ std::map<char, Piece> getCharPieceMap() {
 
   return map;
 }
+
+struct State {
+  BoardT board;
+  std::optional<Side> turn;
+};
 
 }  // namespace dwc

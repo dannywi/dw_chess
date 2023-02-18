@@ -53,11 +53,19 @@ Provide I/O functionalities:
   - [DONE] add pawn initially can move 2 squares
   - [DONE] add pawn can only take diagonally, and cannot capture with it's normal move
   - [DONE] on move, throw if it's not within legal move
+  - [DONE] decouple State: create a State struct that has board, enpassant pos, castling condition, half move, turn
+  - special move abstraction:
+    - after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
+    - add legal move, pass state and position - castling: add castling, en passant: add en passant
+  - first use the concept for pawn first move (doesn't need state) - remove get_extra_moves_pawn
+  - use for pawn diagonal take, etc.
+  - use for change turn
   - support castling (another state in board)
-    - add state (vector of Piece KQkq)
+    - add state (class for KQkq)
     - add extra move
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
+  - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
 - move validation / state:
   - king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
   - rook/king moved -> can't castle on that side
@@ -78,14 +86,16 @@ Provide I/O functionalities:
 - framework: api for setting board using FEN notation https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
   - [DONE] board
   - turn, castling, en passant, half move, full move
-- framework state: whose turn
+[DONE] - framework state: whose turn
 - framework state: keep a tally of eaten pieces (clear on reset)
-- rule: consume Framework, provide all legal moves
+[DONE] - rule: consume Framework, provide all legal moves
 - runner: console 2 player engine (command prompt)
 - engine: random engine
 - runner: console 1 player with random engine
 
 ### Cleanups
+- check if special moves like en passant, castling, and promotion can be abstracted
+- split test cases per include file or namespace
 - include statement in tests, remove full paths
 - [DONE] add script to run buildifier and clang-format
 - add gha to do buildifier and clang format automatically on commit
