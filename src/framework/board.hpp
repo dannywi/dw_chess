@@ -50,12 +50,10 @@ class Board {
   MovesT get_moves(Pos pos) const;
 
   template <class T, class... REST>
-  void call_movers(Pos pos, MovesT& moves, T, REST... rest) const {
+  void call_movers(Pos pos, MovesT& moves) const {
     MovesT res = T::get_moves(*this, pos);
     moves.insert(end(moves), begin(res), end(res));
-    call_movers(pos, moves, rest...);
+    if constexpr (sizeof...(REST)) call_movers<REST...>(pos, moves);
   }
-
-  void call_movers(Pos pos, MovesT& moves) const {}
 };
 }  // namespace dwc
