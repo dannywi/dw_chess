@@ -59,9 +59,11 @@ Provide I/O functionalities:
     - after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
     - [DONE] add legal move, pass state and position (separate classes for enpassant, castling, ...)
   - [DONE] first use the concept for pawn ahead move (doesn't need state) - remove from get_extra_moves_pawn
-  - use for pawn diagonal take, completely remove get_extra_moves_pawn
+  - [DONE] use for pawn diagonal take, completely remove get_extra_moves_pawn
+  - Add "target piece" in each mover class, so call_movers can do the piece check, and empty check
   - use for change turn
   - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
+  - use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - support castling (another state in board)
     - add state (class for KQkq)
     - add extra move
