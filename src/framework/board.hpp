@@ -9,30 +9,29 @@ namespace dwc {
 
 class Board {
  private:
-  BoardT board_;
-  std::optional<Side> turn_;
+  dwc::State state_;
 
   void flip_turn() {
-    if (!turn_.has_value()) return;
-    turn_ = turn_.value() == Side::WHITE ? Side::BLACK : Side::WHITE;
+    if (!state_.turn.has_value()) return;
+    state_.turn = state_.turn.value() == Side::WHITE ? Side::BLACK : Side::WHITE;
   }
 
   void check_move(Pos fr, Pos to) const;
 
-  void set(Pos pos, Piece piece) { board_ut::set(pos, piece, board_); }
-  void clear(Pos pos) { board_ut::clear(pos, board_); }
+  void set(Pos pos, Piece piece) { board_ut::set(pos, piece, state_.board); }
+  void clear(Pos pos) { board_ut::clear(pos, state_.board); }
 
   void init(std::string_view fen_str) {
     dwc::fen::FenParser fp(fen_str);
-    board_ = fp.get_board_pos();
-    turn_ = fp.get_turn_side().value_or(Side::WHITE);
+    state_.board = fp.get_board_pos();
+    state_.turn = fp.get_turn_side().value_or(Side::WHITE);
   }
 
  public:
   Board() {}
   Board(std::string_view fen_str) { init(fen_str); }
 
-  std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, board_); }
+  std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, state_.board); }
 
   void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"); }
 
@@ -45,5 +44,18 @@ class Board {
 
     flip_turn();
   }
+
+  const State& get_state() const { return state_; }
+
+  MovesT get_moves(Pos pos) const;
+
+  template <class T, class... REST>
+  void call_movers(Pos pos, MovesT& moves, T, REST... rest) const {
+    MovesT res = T::get_moves(*this, pos);
+    moves.insert(end(moves), begin(res), end(res));
+    call_movers(pos, moves, rest...);
+  }
+
+  void call_movers(Pos pos, MovesT& moves) const {}
 };
 }  // namespace dwc

@@ -7,7 +7,6 @@
 #include "board.hpp"
 
 namespace dwc::legal_move {
-using MovesT = std::vector<Move>;
 
 namespace _inner {
 enum class MoveDirection : uint8_t {
@@ -195,18 +194,6 @@ MovesT get_extra_moves_pawn(Board board, Piece piece, Pos pos) {
   MovesT moves;
   uint8_t mult = piece.side == Side::WHITE ? 1 : -1;
 
-  auto add_ahead = [&](Pos::RankT rank) {
-    Pos pos_ahead{pos.file, rank};
-    auto ahead = board.get(pos_ahead);
-    if (!ahead.has_value()) { moves.push_back({pos, pos_ahead}); }
-  };
-
-  // basic step
-  add_ahead(pos.rank + mult);
-
-  // one more if starting from second rank
-  if (pos.rank == (piece.side == Side::WHITE ? 1 : 6)) { add_ahead(pos.rank + 2 * mult); }
-
   // diagonal capture if possible
   auto within = [](auto v) { return 0 <= v && v <= 7; };
   auto inside = [within](Pos pos) { return within(pos.file) && within(pos.rank); };
@@ -239,22 +226,40 @@ MovesT get_extra_moves(Board board, Piece piece, Pos pos) {
 
 }  // namespace _inner
 
-MovesT get_moves(const Board& board, Pos pos) {
-  auto piece = board.get(pos);
-  if (!piece.has_value()) return {};
-  auto dict = _inner::get_mover_dict();
-  auto mover = dict[piece.value().ordinal()];
-  auto moves = _inner::get_moves_from_mover(board, piece.value(), pos, mover);
-  _inner::insert(moves, _inner::get_extra_moves(board, piece.value(), pos));
-  return moves;
-}
-
 bool is_legal_move(const Board& board, Pos pos, Move move) {
-  auto moves = get_moves(board, pos);
+  auto moves = board.get_moves(pos);
   for (auto m : moves) {
     if (m == move) return true;
   }
   return false;
 }
 
+}  // namespace dwc::legal_move
+
+namespace dwc::legal_move {
+class MoverPawnAhead {
+ public:
+  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+    auto piece = board.get(pos);
+    if (!piece.has_value() || piece.value().type != Type::PAWN) return {};
+
+    MovesT moves;
+    uint8_t mult = piece.value().side == Side::WHITE ? 1 : -1;
+    auto add_ahead = [&](Pos::RankT rank) {
+      Pos pos_ahead{pos.file, rank};
+      auto ahead = board.get(pos_ahead);
+      if (!ahead.has_value()) { moves.push_back({pos, pos_ahead}); }
+    };
+
+    // basic step
+    add_ahead(pos.rank + mult);
+
+    // one more if starting from second rank
+    if (pos.rank == (piece.value().side == Side::WHITE ? 1 : 6)) { add_ahead(pos.rank + 2 * mult); }
+
+    return moves;
+  };
+
+  static void update_state(State& state, Move move) {}
+};
 }  // namespace dwc::legal_move

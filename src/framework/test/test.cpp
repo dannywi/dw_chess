@@ -165,42 +165,38 @@ bool find_me(CONT cont, T v) {
 }
 
 TEST(BOARD, LegalMoves01) {
-  using dwc::legal_move::get_moves;
-
   dwc::Board b;
   b.reset_position();
 
   // pawn special move
-  auto moves = get_moves(b, {"h2"});
+  auto moves = b.get_moves({"h2"});
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"h2"}, {"h3"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"h2"}, {"h4"}}));
 
-  moves = get_moves(b, {"b7"});
+  moves = b.get_moves({"b7"});
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"b7"}, {"b6"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"b7"}, {"b5"}}));
 
   // most other pieces can't move
-  EXPECT_EQ(get_moves(b, {"e1"}).size(), 0);
-  EXPECT_EQ(get_moves(b, {"d8"}).size(), 0);
+  EXPECT_EQ(b.get_moves({"e1"}).size(), 0);
+  EXPECT_EQ(b.get_moves({"d8"}).size(), 0);
 
   // knights can move
-  moves = get_moves(b, {"b1"});
+  moves = b.get_moves({"b1"});
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"b1"}, {"a3"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"b1"}, {"c3"}}));
 
   // todo: after legal move checks turns, move a white piece to check this
-  moves = get_moves(b, {"g8"});
+  moves = b.get_moves({"g8"});
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"g8"}, {"h6"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"g8"}, {"f6"}}));
 }
 
 TEST(BOARD, LegalMoves02) {
-  using dwc::legal_move::get_moves;
-
   dwc::Board b;
   b.reset_position();
   b.move({{"e2"}, {"e4"}});
@@ -209,12 +205,12 @@ TEST(BOARD, LegalMoves02) {
   // dwc::display(b);
 
   // white king can move
-  auto moves = get_moves(b, {"e1"});
+  auto moves = b.get_moves({"e1"});
   EXPECT_EQ(moves.size(), 1);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e1"}, {"e2"}}));
 
   // white queen can move
-  moves = get_moves(b, {"d1"});
+  moves = b.get_moves({"d1"});
   EXPECT_EQ(moves.size(), 4);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"e2"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"f3"}}));
@@ -222,7 +218,7 @@ TEST(BOARD, LegalMoves02) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d1"}, {"h5"}}));
 
   // white bishop can move
-  moves = get_moves(b, {"f1"});
+  moves = b.get_moves({"f1"});
   EXPECT_EQ(moves.size(), 5);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"e2"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"f1"}, {"d3"}}));
@@ -232,15 +228,13 @@ TEST(BOARD, LegalMoves02) {
 }
 
 TEST(BOARD, LegalMoves03) {
-  using dwc::legal_move::get_moves;
-
   dwc::Board b;
   b.reset_position();
   b.move({{"e2"}, {"e4"}});
   b.move({{"d7"}, {"d5"}});
   // dwc::display(b);
 
-  auto moves = get_moves(b, {"e4"});
+  auto moves = b.get_moves({"e4"});
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"e5"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"d5"}}));
@@ -248,7 +242,7 @@ TEST(BOARD, LegalMoves03) {
   b.move({{"c2"}, {"c4"}});
   // dwc::display(b);
 
-  moves = get_moves(b, {"d5"});
+  moves = b.get_moves({"d5"});
   EXPECT_EQ(moves.size(), 3);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"e4"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"d4"}}));
@@ -257,14 +251,12 @@ TEST(BOARD, LegalMoves03) {
   b.move({{"c7"}, {"c5"}});
   // dwc::display(b);
 
-  moves = get_moves(b, {"c4"});
+  moves = b.get_moves({"c4"});
   EXPECT_EQ(moves.size(), 1);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
 }
 
 TEST(BOARD, LegalMoves04) {
-  using dwc::legal_move::get_moves;
-
   dwc::Board b;
   b.reset_position();
 
@@ -278,7 +270,6 @@ TEST(BOARD, LegalMoves04) {
 }
 
 TEST(BOARD, EnPassant01) {
-  using dwc::legal_move::get_moves;
   dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR b"};
   b.move({{"d7"}, {"d5"}});
   dwc::display(b);
