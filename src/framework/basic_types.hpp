@@ -17,6 +17,9 @@ enum class Type : uint8_t {
   SIZE,
 };
 
+template <size_t N>
+using TypesT = std::array<Type, N>;
+
 enum class Side : uint8_t {
   WHITE,
   BLACK,

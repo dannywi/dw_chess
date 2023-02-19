@@ -86,3 +86,26 @@ TEST(TaggedArithmeticT, Conversion04) {
   int arr[] = {3, 4, 5};
   EXPECT_EQ(arr[Type1{1}], 4);
 }
+
+namespace TestContains {
+template <class CONT>
+void Action1() {
+  using dwc::utils::contains;
+  CONT cont{-3, 99, 2, -10};
+  EXPECT_TRUE(contains(cont, -3));
+  EXPECT_TRUE(contains(cont, 99));
+  EXPECT_TRUE(contains(cont, 2));
+  EXPECT_FALSE(contains(cont, -3.3));
+  EXPECT_FALSE(contains(cont, 0));
+}
+
+template <class CONT, class... REST>
+void Action() {
+  Action1<CONT>();
+  if constexpr (sizeof...(REST) > 0) Action<REST...>();
+}
+}  // namespace TestContains
+
+TEST(BasicUtils, Contains) {
+  TestContains::Action<std::vector<int>, std::set<double>, std::array<float, 4>>();
+}

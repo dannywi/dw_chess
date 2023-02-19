@@ -60,7 +60,7 @@ Provide I/O functionalities:
     - [DONE] add legal move, pass state and position (separate classes for enpassant, castling, ...)
   - [DONE] first use the concept for pawn ahead move (doesn't need state) - remove from get_extra_moves_pawn
   - [DONE] use for pawn diagonal take, completely remove get_extra_moves_pawn
-  - Add "target piece" in each mover class, so call_movers can do the piece check, and empty check
+  - [DONE] Add "target piece" in each mover class, so call_movers can do the piece check, and empty check
   - use for change turn
   - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
@@ -115,3 +115,4 @@ Provide I/O functionalities:
   - may need reverse ordinal to get piece from index
 - [DONE] make MoveDiff constexpr mapping
 - move the character mapping to similar structure
+- make PiecesT detect the array size without passing it
