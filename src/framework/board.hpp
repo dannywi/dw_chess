@@ -51,8 +51,14 @@ class Board {
 
   template <class T, class... REST>
   void call_movers(Pos pos, MovesT& moves) const {
-    MovesT res = T::get_moves(*this, pos);
-    moves.insert(end(moves), begin(res), end(res));
+    auto piece = get(pos);
+    if (!piece.has_value()) return;
+
+    if (dwc::utils::contains(T::TargetTypes, piece->type)) {
+      MovesT res = T::get_moves(*this, pos);
+      moves.insert(end(moves), begin(res), end(res));
+    }
+
     if constexpr (sizeof...(REST)) call_movers<REST...>(pos, moves);
   }
 };

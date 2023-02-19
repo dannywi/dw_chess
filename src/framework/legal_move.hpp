@@ -202,17 +202,18 @@ bool is_legal_move(const Board& board, Pos pos, Move move) {
 namespace dwc::legal_move {
 class MoverPawnAhead {
  public:
+  static constexpr TypesT<1> TargetTypes{Type::PAWN};
+
   static MovesT get_moves(const dwc::Board& board, Pos pos) {
     auto piece = board.get(pos);
-    if (!piece.has_value() || piece->type != Type::PAWN) return {};
-
     MovesT moves;
-    uint8_t mult = piece->side == Side::WHITE ? 1 : -1;
     auto add_ahead = [&](Pos::RankT rank) {
       Pos pos_ahead{pos.file, rank};
       auto ahead = board.get(pos_ahead);
       if (!ahead.has_value()) { moves.push_back({pos, pos_ahead}); }
     };
+
+    uint8_t mult = piece->side == Side::WHITE ? 1 : -1;
 
     // basic step
     add_ahead(pos.rank + mult);
@@ -228,13 +229,9 @@ class MoverPawnAhead {
 
 class MoverPawnTake {
  public:
+  static constexpr TypesT<1> TargetTypes{Type::PAWN};
+
   static MovesT get_moves(const dwc::Board& board, Pos pos) {
-    auto piece = board.get(pos);
-    if (!piece.has_value() || piece->type != Type::PAWN) return {};
-
-    MovesT moves;
-    uint8_t mult = piece->side == Side::WHITE ? 1 : -1;
-
     // diagonal capture if possible
     auto within = [](auto v) { return 0 <= v && v <= 7; };
     auto inside = [within](Pos pos) { return within(pos.file) && within(pos.rank); };
@@ -242,10 +239,14 @@ class MoverPawnTake {
       auto p = board.get(pos);
       return p.has_value() && p->side != my_side;
     };
+
+    auto piece = board.get(pos);
+    MovesT moves;
     auto add_capt = [&](Pos pos_cap) {
       if (inside(pos_cap) && has_opp(piece->side, pos_cap)) moves.push_back({pos, pos_cap});
     };
 
+    uint8_t mult = piece->side == Side::WHITE ? 1 : -1;
     add_capt({static_cast<Pos::FileT>(pos.file - 1), static_cast<Pos::RankT>(pos.rank + mult)});
     add_capt({static_cast<Pos::FileT>(pos.file + 1), static_cast<Pos::RankT>(pos.rank + mult)});
 
