@@ -255,4 +255,16 @@ class MoverPawnTake {
 
   static void update_state(State& state, Move move) {}
 };
+
+class UpdaterTurn {
+ public:
+  static constexpr TypesT<cast_t(Type::SIZE)> TargetTypes{Type::PAWN, Type::KNIGHT, Type::BISHOP,
+                                                          Type::ROOK, Type::QUEEN,  Type::KING};
+
+  static MovesT get_moves(const dwc::Board&, Pos) { return {}; };
+
+  static void update_state(State& state, Move move) {
+    state.turn = state.turn == Side::BLACK ? Side::WHITE : Side::BLACK;
+  }
+};
 }  // namespace dwc::legal_move
