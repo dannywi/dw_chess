@@ -1,10 +1,6 @@
 cc_library(
     name = "shared",
-    srcs = [
-        "utils.cpp",
-    ],
-    hdrs = [
-        "utils.hpp",
-    ],
+    srcs = glob(["*.cpp"]),
+    hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )
