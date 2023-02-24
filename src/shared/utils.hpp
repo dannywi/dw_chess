@@ -1,6 +1,7 @@
 #ifndef DWC_UTILS_HPP
 #define DWC_UTILS_HPP
 
+#include <algorithm>
 #include <sstream>
 #include <string_view>
 #include <type_traits>
