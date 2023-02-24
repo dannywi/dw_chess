@@ -9,6 +9,7 @@
 namespace dwc {
 
 namespace legal_move {
+class MoverBasic;
 class UpdaterTurn;
 class MoverPawnAhead;
 class MoverPawnTake;
@@ -29,8 +30,8 @@ class Board {
     state_.turn = fp.get_turn_side().value_or(Side::WHITE);
   }
 
-  using MoverUpdaterList =
-      utils::type_list<legal_move::UpdaterTurn, legal_move::MoverPawnAhead, legal_move::MoverPawnTake>;
+  using MoverUpdaterList = utils::type_list<legal_move::MoverBasic, legal_move::UpdaterTurn, legal_move::MoverPawnAhead,
+                                            legal_move::MoverPawnTake>;
 
  public:
   Board() {}

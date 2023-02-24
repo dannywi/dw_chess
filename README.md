@@ -62,7 +62,7 @@ Provide I/O functionalities:
   - [DONE] use for pawn diagonal take, completely remove get_extra_moves_pawn
   - [DONE] Add "target piece" in each mover class, so call_movers can do the piece check, and empty check
   - [DONE] use for change turn
-  - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
+  - [DONE] use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - support castling (another state in board)
     - add state (class for KQkq)
