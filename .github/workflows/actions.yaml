@@ -1,0 +1,19 @@
+name: Checker Tasks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Formats
+        run: ./run_format.sh
+      - name: Build and Test
+        run: ./run_tests.sh
