@@ -55,15 +55,15 @@ Provide I/O functionalities:
   - [DONE] on move, throw if it's not within legal move
   - [DONE] decouple State: create a State struct that has board, enpassant pos, castling condition, half move, turn
   - [DONE] move MovesT to basic_types
-  - special move abstraction:
-    - after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
+  - [DONE] special move abstraction:
+    - [DONE] after each move, update state - castling: remove if castling, remove if moved, en passant: add if 2 squares move
     - [DONE] add legal move, pass state and position (separate classes for enpassant, castling, ...)
   - [DONE] first use the concept for pawn ahead move (doesn't need state) - remove from get_extra_moves_pawn
   - [DONE] use for pawn diagonal take, completely remove get_extra_moves_pawn
   - [DONE] Add "target piece" in each mover class, so call_movers can do the piece check, and empty check
   - [DONE] use for change turn
   - use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
-  - use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
+  - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - support castling (another state in board)
     - add state (class for KQkq)
     - add extra move
@@ -111,11 +111,14 @@ Provide I/O functionalities:
   - [DONE] create a base in utils, tests
   - [DONE] replace implementation in framework
 - [DONE] make MoverDictT (Piece -> Mover) constexpr
-  - create an ordinal for piece (make hasher public)
-  - use the ordinal as key
-  - may need reverse ordinal to get piece from index
+  - [DONE] create an ordinal for piece (make hasher public)
+  - [DONE] use the ordinal as key
+  - [DONE] may need reverse ordinal to get piece from index
 - [DONE] make MoveDiff constexpr mapping
 - move the character mapping to similar structure
 - make PiecesT detect the array size without passing it
 - maybe separate files for each movers, and add unit tests
   - or, rename legal_moves to mover_updater.hpp
+- refactor call_updater and call_movers, e.g. with apply func with type_list
+- add _t and _v versions of type_list utilities
+- add edge case tests for type_list utils, e.g. with zero template param

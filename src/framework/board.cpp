@@ -20,7 +20,7 @@ MovesT Board::get_moves(Pos pos) const {
   auto mover = dict[piece.value().ordinal()];
   auto moves = legal_move::_inner::get_moves_from_mover(*this, piece.value(), pos, mover);
 
-  call_movers<legal_move::UpdaterTurn, legal_move::MoverPawnAhead, legal_move::MoverPawnTake>(pos, moves);
+  call_movers<MoverUpdaterList>(pos, moves);
 
   return moves;
 }
@@ -33,6 +33,6 @@ void Board::move(Move move) {
   clear(move.fr);
   set(move.to, piece.value());
 
-  call_updaters<legal_move::UpdaterTurn, legal_move::MoverPawnAhead, legal_move::MoverPawnTake>(state_, move);
+  call_updaters<MoverUpdaterList>(state_, move);
 }
 }  // namespace dwc
