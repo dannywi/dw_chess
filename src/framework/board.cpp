@@ -20,8 +20,19 @@ MovesT Board::get_moves(Pos pos) const {
   auto mover = dict[piece.value().ordinal()];
   auto moves = legal_move::_inner::get_moves_from_mover(*this, piece.value(), pos, mover);
 
-  call_movers<legal_move::MoverPawnAhead, legal_move::MoverPawnTake>(pos, moves);
+  call_movers<MoverUpdaterList>(pos, moves);
 
   return moves;
+}
+
+void Board::move(Move move) {
+  check_move(move.fr, move.to);
+  std::optional<Piece> piece = get(move.fr);
+
+  // todo: make this atomic?
+  clear(move.fr);
+  set(move.to, piece.value());
+
+  call_updaters<MoverUpdaterList>(state_, move);
 }
 }  // namespace dwc

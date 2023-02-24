@@ -93,6 +93,7 @@ class TaggedArithmeticT {
   }
 };
 
+// component search util
 template <class CONT, class T>
 bool contains(const CONT& c, T v) {
   return std::find(begin(c), end(c), v) != end(c);

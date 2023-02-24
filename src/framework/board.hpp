@@ -4,17 +4,19 @@
 
 #include "basic_types.hpp"
 #include "fen_lib.hpp"
+#include "src/shared/type_list.hpp"
 
 namespace dwc {
+
+namespace legal_move {
+class UpdaterTurn;
+class MoverPawnAhead;
+class MoverPawnTake;
+}  // namespace legal_move
 
 class Board {
  private:
   dwc::State state_;
-
-  void flip_turn() {
-    if (!state_.turn.has_value()) return;
-    state_.turn = state_.turn.value() == Side::WHITE ? Side::BLACK : Side::WHITE;
-  }
 
   void check_move(Pos fr, Pos to) const;
 
@@ -27,6 +29,9 @@ class Board {
     state_.turn = fp.get_turn_side().value_or(Side::WHITE);
   }
 
+  using MoverUpdaterList =
+      utils::type_list<legal_move::UpdaterTurn, legal_move::MoverPawnAhead, legal_move::MoverPawnTake>;
+
  public:
   Board() {}
   Board(std::string_view fen_str) { init(fen_str); }
@@ -35,31 +40,35 @@ class Board {
 
   void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"); }
 
-  void move(Move move) {
-    check_move(move.fr, move.to);
-    std::optional<Piece> piece = get(move.fr);
-    clear(move.fr);
-    // todo: keep captured piece, per side
-    set(move.to, piece.value());
-
-    flip_turn();
-  }
-
+  void move(Move move);
+  MovesT get_moves(Pos pos) const;
   const State& get_state() const { return state_; }
 
-  MovesT get_moves(Pos pos) const;
-
-  template <class T, class... REST>
+  template <typename TL>
   void call_movers(Pos pos, MovesT& moves) const {
     auto piece = get(pos);
     if (!piece.has_value()) return;
 
+    using T = typename dwc::utils::head<TL>::type;
     if (dwc::utils::contains(T::TargetTypes, piece->type)) {
       MovesT res = T::get_moves(*this, pos);
       moves.insert(end(moves), begin(res), end(res));
     }
 
-    if constexpr (sizeof...(REST)) call_movers<REST...>(pos, moves);
+    using REST = typename dwc::utils::tail<TL>::type;
+    if constexpr (dwc::utils::size<REST>::value > 0) call_movers<REST>(pos, moves);
+  }
+
+  template <typename TL>
+  void call_updaters(State& state, Move move) const {
+    auto piece = get(move.to);
+    if (!piece.has_value()) return;
+
+    using T = typename dwc::utils::head<TL>::type;
+    if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, move); }
+
+    using REST = typename dwc::utils::tail<TL>::type;
+    if constexpr (dwc::utils::size<REST>::value > 0) call_updaters<REST>(state, move);
   }
 };
 }  // namespace dwc
