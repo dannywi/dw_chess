@@ -5,28 +5,28 @@
 using namespace dwc::utils;
 
 TEST(TypeList, Basic) {
-  EXPECT_TRUE((std::is_same<head<float, int>::type, float>::value));
-  EXPECT_TRUE((std::is_same<tail<float, int>::type, type_list<int>>::value));
-  EXPECT_EQ((size<int, float>::value), 2);
-  EXPECT_TRUE((std::is_same<at<0, long, float, double, int>::type, long>::value));
-  EXPECT_TRUE((std::is_same<at<1, long, float, double, int>::type, float>::value));
-  EXPECT_TRUE((std::is_same<at<2, long, float, double, int>::type, double>::value));
-  EXPECT_TRUE((std::is_same<at<3, long, float, double, int>::type, int>::value));
+  EXPECT_TRUE((std::is_same_v<head_t<float, int>, float>));
+  EXPECT_TRUE((std::is_same_v<tail_t<float, int>, type_list<int>>));
+  EXPECT_EQ((size_v<int, float>), 2);
+  EXPECT_TRUE((std::is_same_v<at_t<0, long, float, double, int>, long>));
+  EXPECT_TRUE((std::is_same_v<at_t<1, long, float, double, int>, float>));
+  EXPECT_TRUE((std::is_same_v<at_t<2, long, float, double, int>, double>));
+  EXPECT_TRUE((std::is_same_v<at_t<3, long, float, double, int>, int>));
 
   using TL = type_list<char, long, bool>;
-  EXPECT_TRUE((std::is_same<head<TL>::type, char>::value));
-  EXPECT_TRUE((std::is_same<tail<TL>::type, type_list<long, bool>>::value));
-  EXPECT_EQ((size<TL>::value), 3);
-  EXPECT_TRUE((std::is_same<at<0, TL>::type, char>::value));
-  EXPECT_TRUE((std::is_same<at<1, TL>::type, long>::value));
-  EXPECT_TRUE((std::is_same<at<2, TL>::type, bool>::value));
+  EXPECT_TRUE((std::is_same_v<head_t<TL>, char>));
+  EXPECT_TRUE((std::is_same_v<tail_t<TL>, type_list<long, bool>>));
+  EXPECT_EQ((size_v<TL>), 3);
+  EXPECT_TRUE((std::is_same_v<at_t<0, TL>, char>));
+  EXPECT_TRUE((std::is_same_v<at_t<1, TL>, long>));
+  EXPECT_TRUE((std::is_same_v<at_t<2, TL>, bool>));
 
-  EXPECT_TRUE((std::is_same<tail<tail<TL>::type>::type, type_list<bool>>::value));
+  EXPECT_TRUE((std::is_same_v<tail_t<tail_t<TL>>, type_list<bool>>));
 
-  EXPECT_EQ(size<TL>::value, 3);
-  EXPECT_EQ(size<tail<TL>::type>::value, 2);
-  EXPECT_EQ(size<tail<tail<TL>::type>::type>::value, 1);
-  EXPECT_EQ(size<tail<tail<tail<TL>::type>::type>::type>::value, 0);
+  EXPECT_EQ(size_v<TL>, 3);
+  EXPECT_EQ(size_v<tail_t<TL>>, 2);
+  EXPECT_EQ(size_v<tail_t<tail_t<TL>>>, 1);
+  EXPECT_EQ(size_v<tail_t<tail_t<tail_t<TL>>>>, 0);
 }
 
 namespace test {
@@ -41,8 +41,8 @@ TEST(TypeList, Usage01) {
   EXPECT_EQ(test::get_default<bool>(), 0);
 
   using TL = type_list<double, float, int>;
-  EXPECT_EQ((test::get_default<at<1, TL>::type>()), 0);
-  EXPECT_EQ((test::get_default<at<2, TL>::type>()), 0);
+  EXPECT_EQ((test::get_default<at_t<1, TL>>()), 0);
+  EXPECT_EQ((test::get_default<at_t<2, TL>>()), 0);
 }
 
 namespace test {
@@ -55,9 +55,9 @@ struct add {
 namespace test1 {
 template <size_t I, typename TL>
 void call_all_impl(int& v) {
-  using F = typename at<I, TL>::type;
+  using F = at_t<I, TL>;
   F::act(v);
-  if constexpr (I < size<TL>::value - 1) call_all_impl<I + 1, TL>(v);
+  if constexpr (I < size_v<TL> - 1) call_all_impl<I + 1, TL>(v);
 }
 template <typename TL>
 void call_all(int& v) {
@@ -77,9 +77,9 @@ TEST(TypeList, Usage02_LoopWithIndex) {
 namespace test2 {
 template <typename TL>
 void call_all_impl(int& v) {
-  using F = typename head<TL>::type;
+  using F = head_t<TL>;
   F::act(v);
-  if constexpr (size<typename tail<TL>::type>::value > 0) call_all_impl<typename tail<TL>::type>(v);
+  if constexpr (size_v < tail_t < TL >>> 0) call_all_impl<tail_t<TL>>(v);
 }
 template <typename TL>
 void call_all(int& v) {

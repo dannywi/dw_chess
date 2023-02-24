@@ -120,5 +120,5 @@ Provide I/O functionalities:
 - maybe separate files for each movers, and add unit tests
   - or, rename legal_moves to mover_updater.hpp
 - refactor call_updater and call_movers, e.g. with apply func with type_list
-- add _t and _v versions of type_list utilities
+- [DONE] add _t and _v versions of type_list utilities
 - add edge case tests for type_list utils, e.g. with zero template param

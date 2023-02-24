@@ -49,14 +49,14 @@ class Board {
     auto piece = get(pos);
     if (!piece.has_value()) return;
 
-    using T = typename dwc::utils::head<TL>::type;
+    using T = dwc::utils::head_t<TL>;
     if (dwc::utils::contains(T::TargetTypes, piece->type)) {
       MovesT res = T::get_moves(*this, pos);
       moves.insert(end(moves), begin(res), end(res));
     }
 
-    using REST = typename dwc::utils::tail<TL>::type;
-    if constexpr (dwc::utils::size<REST>::value > 0) call_movers<REST>(pos, moves);
+    using TAIL = dwc::utils::tail_t<TL>;
+    if constexpr (dwc::utils::size_v < TAIL >> 0) call_movers<TAIL>(pos, moves);
   }
 
   template <typename TL>
@@ -64,11 +64,11 @@ class Board {
     auto piece = get(move.to);
     if (!piece.has_value()) return;
 
-    using T = typename dwc::utils::head<TL>::type;
+    using T = dwc::utils::head_t<TL>;
     if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, move); }
 
-    using REST = typename dwc::utils::tail<TL>::type;
-    if constexpr (dwc::utils::size<REST>::value > 0) call_updaters<REST>(state, move);
+    using TAIL = dwc::utils::tail_t<TL>;
+    if constexpr (dwc::utils::size_v < TAIL >> 0) call_updaters<TAIL>(state, move);
   }
 };
 }  // namespace dwc
