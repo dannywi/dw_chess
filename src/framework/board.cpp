@@ -13,15 +13,8 @@ void Board::check_move(Pos fr, Pos to) const {
 }
 
 MovesT Board::get_moves(Pos pos) const {
-  // todo: replace this block with a mover class (MoverBasic)
-  auto piece = get(pos);
-  if (!piece.has_value()) return {};
-  auto dict = legal_move::_inner::get_mover_dict();
-  auto mover = dict[piece.value().ordinal()];
-  auto moves = legal_move::_inner::get_moves_from_mover(*this, piece.value(), pos, mover);
-
+  MovesT moves;
   call_movers<MoverUpdaterList>(pos, moves);
-
   return moves;
 }
 
