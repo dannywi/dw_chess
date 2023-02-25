@@ -53,9 +53,9 @@ TEST(TaggedArithmeticT, Operator01) {
 TEST(TaggedArithmeticT, Operator02) {
   using Type = TaggedArithmeticT<1, uint64_t>;
 
-  EXPECT_TRUE(Type{10} < 11);
-  EXPECT_TRUE(Type{10} <= 10);
-  EXPECT_TRUE(Type{10} <= 11);
+  EXPECT_TRUE(Type{10} < 11UL);
+  EXPECT_TRUE(Type{10} <= 10UL);
+  EXPECT_TRUE(Type{10} <= 11UL);
 }
 
 TEST(TaggedArithmeticT, Conversion01) {
@@ -84,7 +84,7 @@ TEST(TaggedArithmeticT, Conversion04) {
   EXPECT_EQ(Type1{3} + 3, 6);
 
   int arr[] = {3, 4, 5};
-  EXPECT_EQ(arr[Type1{1}], 4);
+  EXPECT_EQ(arr[static_cast<int>(Type1{1})], 4);
 }
 
 namespace TestContains {

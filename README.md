@@ -99,6 +99,13 @@ Provide I/O functionalities:
 - runner: console 1 player with random engine
 
 ### Cleanups
+- [DONE] add github action for formatting and testing
+- fix formatter in CI
+  - install buildifier
+  - use option to fix or check only
+  - make CI fail on script failure
+- use toolchain in bazel, so local and CI are aligned
+- use bazelisk to control bazel version
 - check if special moves like en passant, castling, and promotion can be abstracted
 - split test cases per include file or namespace
 - include statement in tests, remove full paths
