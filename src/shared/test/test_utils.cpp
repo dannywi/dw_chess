@@ -83,9 +83,8 @@ TEST(TaggedArithmeticT, Conversion04) {
   using Type1 = TaggedArithmeticT<4, float>;
   EXPECT_EQ(Type1{3} + 3, 6);
 
-  using Type2 = TaggedArithmeticT<8, size_t>;
   int arr[] = {3, 4, 5};
-  EXPECT_EQ(arr[Type2{1}], 4);
+  EXPECT_EQ(arr[static_cast<int>(Type1{1})], 4);
 }
 
 namespace TestContains {
