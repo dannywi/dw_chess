@@ -78,7 +78,7 @@ Provide I/O functionalities:
   - [DONE] support piece placement
   - [DONE] support multiple segments
   - [DONE] support turn
-  - support castling
+  - [DONE] support castling
   - support en passant
   - support half move, max 50
 - move: pawn promotion
