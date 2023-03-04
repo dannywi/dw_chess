@@ -311,6 +311,27 @@ TEST(BOARD, FenBoardParser02) {
   EXPECT_THROW(dwc::fen::_inner::parse_side("a").value(), std::runtime_error);
 }
 
+TEST(BOARD, FenBoardParser03) {
+  using ResT = std::set<dwc::Piece>;
+  dwc::Piece K{dwc::Type::KING, dwc::Side::WHITE};
+  dwc::Piece Q{dwc::Type::QUEEN, dwc::Side::WHITE};
+  dwc::Piece k{dwc::Type::KING, dwc::Side::BLACK};
+  dwc::Piece q{dwc::Type::QUEEN, dwc::Side::BLACK};
+  EXPECT_EQ(dwc::fen::_inner::parse_castling("K"), (ResT{{K}}));
+  EXPECT_EQ(dwc::fen::_inner::parse_castling("KQ"), (ResT{{K, Q}}));
+  EXPECT_EQ(dwc::fen::_inner::parse_castling("KQk"), (ResT{{K, Q, k}}));
+  EXPECT_EQ(dwc::fen::_inner::parse_castling("KQkq"), (ResT{{K, Q, k, q}}));
+  EXPECT_EQ(dwc::fen::_inner::parse_castling("qk"), (ResT{{k, q}}));
+  EXPECT_EQ(dwc::fen::_inner::parse_castling(""), (ResT{}));
+
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("KK"), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("kqq"), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("KQkQ"), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("KQkqR"), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("KQR"), std::runtime_error);
+  EXPECT_THROW(dwc::fen::_inner::parse_castling("R"), std::runtime_error);
+}
+
 // TEST(BOARD, TempDisplay) {
 //   dwc::Board b;
 //   b.reset_position();

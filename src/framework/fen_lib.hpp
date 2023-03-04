@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>  // delete
+#include <set>
 #include <string_view>
 
 #include "basic_types.hpp"
@@ -62,18 +63,39 @@ std::optional<dwc::Side> parse_side(std::string_view str) {
   return ret;
 }
 
+std::set<dwc::Piece> parse_castling(std::string_view str) {
+  if (str.size() > 4) throw std::runtime_error("fen string ill formatted - too many castling entries");
+  std::set<dwc::Piece> castling;
+  std::set<dwc::Piece> allowed_values{
+      {Type::KING, Side::WHITE}, {Type::QUEEN, Side::WHITE}, {Type::KING, Side::BLACK}, {Type::QUEEN, Side::BLACK}};
+  const auto charPieceMap = dwc::getCharPieceMap();
+
+  for (char c : str) {
+    auto it = charPieceMap.find(c);
+    if (it == charPieceMap.end() || allowed_values.find(it->second) == allowed_values.end()) {
+      throw std::runtime_error("fen string ill formatted - unrecognized castling entry");
+    }
+    dwc::Piece p = it->second;
+    if (castling.find(p) != castling.end()) { throw std::runtime_error("fen string ill formatted - double entry"); }
+    castling.insert(p);
+  }
+  return castling;
+}
+
 }  // namespace _inner
 
 class FenParser {
   utils::StringVecT segments_;
   dwc::BoardT board_;
   std::optional<dwc::Side> turn_side_;
+  std::set<dwc::Piece> castling_;
 
  public:
   FenParser(std::string_view fen_str)
       : segments_(_inner::split_segments(fen_str)), board_(_inner::parse_board_pos(segments_[0])) {
     if (segments_.size() >= 2) turn_side_ = _inner::parse_side(segments_[1]);
-    if (segments_.size() > 2) throw std::runtime_error("fen string has too many segments");
+    if (segments_.size() >= 3) castling_ = _inner::parse_castling(segments_[2]);
+    if (segments_.size() > 3) throw std::runtime_error("fen string has too many segments");
   }
 
   dwc::BoardT get_board_pos() const { return board_; }
