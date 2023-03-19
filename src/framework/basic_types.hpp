@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <optional>
+#include <set>
 
 #include "src/shared/utils.hpp"
 
@@ -135,6 +136,7 @@ std::map<char, Piece> getCharPieceMap() {
 struct State {
   BoardT board;
   std::optional<Side> turn;
+  std::set<dwc::Piece> castling;
 };
 
 }  // namespace dwc

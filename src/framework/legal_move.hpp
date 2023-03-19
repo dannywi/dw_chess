@@ -274,4 +274,25 @@ class UpdaterTurn {
   static void update_state(State& state, Move) { state.turn = state.turn == Side::BLACK ? Side::WHITE : Side::BLACK; }
 };
 
+class MoverCastling {
+ public:
+  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+    auto piece = board.get(pos);
+    if (!piece.has_value() || piece->type != Type::KING) { return {}; }
+
+    MovesT moves;
+    // get allowed castling by color
+    // for each color, check that all cells are empty between king and rook
+    // check that both king and rook is not threatened at the new positions
+
+    // add move (only from King side)
+    return moves;
+  };
+
+  static void update_state(State& state, Move move) {
+    // if move is one of 4 castling moves, remove corresponding castling
+    // if king or rook moved, remove corresponding castling
+  }
+};
+
 }  // namespace dwc::legal_move

@@ -65,8 +65,11 @@ Provide I/O functionalities:
   - [DONE] use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - support castling (another state in board)
-    - add state (class for KQkq)
-    - add extra move
+    - [DONE] add state (class for KQkq)
+    - change signature in get_move to include const State
+    - add move
+      - add helper structs to check each castling types
+      - create helper function to get pieces that threaten a position
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
@@ -129,3 +132,5 @@ Provide I/O functionalities:
 - refactor call_updater and call_movers, e.g. with apply func with type_list
 - [DONE] add _t and _v versions of type_list utilities
 - add edge case tests for type_list utils, e.g. with zero template param
+- make FebLib receive a state object, remove its members
+- allow castling to be done by moving rook
