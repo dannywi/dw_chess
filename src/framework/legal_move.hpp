@@ -199,7 +199,7 @@ class MoverBasic {
  public:
   static constexpr TypesT<5> TargetTypes{Type::KNIGHT, Type::BISHOP, Type::ROOK, Type::QUEEN, Type::KING};
 
-  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+  static MovesT get_moves(const dwc::Board& board, const dwc::State&, Pos pos) {
     auto piece = board.get(pos);
     if (!piece.has_value()) return {};
     return get_moves_from_mover(board, piece.value(), pos, get_mover_dict()[piece.value().ordinal()]);
@@ -212,7 +212,7 @@ class MoverPawnAhead {
  public:
   static constexpr TypesT<1> TargetTypes{Type::PAWN};
 
-  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+  static MovesT get_moves(const dwc::Board& board, const dwc::State&, Pos pos) {
     auto piece = board.get(pos);
     MovesT moves;
     auto add_ahead = [&](Pos::RankT rank) {
@@ -239,7 +239,7 @@ class MoverPawnTake {
  public:
   static constexpr TypesT<1> TargetTypes{Type::PAWN};
 
-  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+  static MovesT get_moves(const dwc::Board& board, const dwc::State&, Pos pos) {
     // diagonal capture if possible
     auto within = [](auto v) { return 0 <= v && v <= 7; };
     auto inside = [within](Pos pos) { return within(pos.file) && within(pos.rank); };
@@ -269,14 +269,14 @@ class UpdaterTurn {
   static constexpr TypesT<cast_t(Type::SIZE)> TargetTypes{Type::PAWN, Type::KNIGHT, Type::BISHOP,
                                                           Type::ROOK, Type::QUEEN,  Type::KING};
 
-  static MovesT get_moves(const dwc::Board&, Pos) { return {}; };
+  static MovesT get_moves(const dwc::Board&, const dwc::State&, Pos) { return {}; };
 
   static void update_state(State& state, Move) { state.turn = state.turn == Side::BLACK ? Side::WHITE : Side::BLACK; }
 };
 
 class MoverCastling {
  public:
-  static MovesT get_moves(const dwc::Board& board, Pos pos) {
+  static MovesT get_moves(const dwc::Board& board, const dwc::State&, Pos pos) {
     auto piece = board.get(pos);
     if (!piece.has_value() || piece->type != Type::KING) { return {}; }
 

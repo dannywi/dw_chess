@@ -66,7 +66,7 @@ Provide I/O functionalities:
   - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - support castling (another state in board)
     - [DONE] add state (class for KQkq)
-    - change signature in get_move to include const State
+    - [DONE] change signature in get_move to include const State
     - add move
       - add helper structs to check each castling types
       - create helper function to get pieces that threaten a position

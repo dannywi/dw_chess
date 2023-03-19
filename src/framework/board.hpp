@@ -52,7 +52,7 @@ class Board {
 
     using T = dwc::utils::head_t<TL>;
     if (dwc::utils::contains(T::TargetTypes, piece->type)) {
-      MovesT res = T::get_moves(*this, pos);
+      MovesT res = T::get_moves(*this, state_, pos);
       moves.insert(end(moves), begin(res), end(res));
     }
 
