@@ -275,17 +275,54 @@ class UpdaterTurn {
 };
 
 class MoverCastling {
+  // todo: make this compile time
+  struct CastleInfo {
+    std::vector<Pos> must_empty_list;
+    Pos king_dest;
+    Pos rook_pos;
+    Pos rook_dest;
+  };
+
+  static std::map<Piece, CastleInfo> type_castle_info_;
+
  public:
-  static MovesT get_moves(const dwc::Board& board, const dwc::State&, Pos pos) {
+  MoverCastling() { init(); }
+
+  void init() {
+    type_castle_info_ = {
+        {{Type::KING, Side::WHITE}, {{{"f1"}, {"g1"}}, {"g1"}, {"h1"}, {"f1"}}},
+        {{Type::QUEEN, Side::WHITE}, {{{"b1"}, {"c1"}, {"d1"}}, {"c1"}, {"a1"}, {"d1"}}},
+        {{Type::KING, Side::BLACK}, {{{"f8"}, {"g8"}}, {"g8"}, {"h8"}, {"f8"}}},
+        {{Type::QUEEN, Side::BLACK}, {{{"b8"}, {"c8"}, {"d8"}}, {"c8"}, {"a8"}, {"d8"}}},
+    };
+  }
+
+  static MovesT get_moves(const dwc::Board& board, const dwc::State& state, Pos pos) {
     auto piece = board.get(pos);
     if (!piece.has_value() || piece->type != Type::KING) { return {}; }
 
     MovesT moves;
-    // get allowed castling by color
-    // for each color, check that all cells are empty between king and rook
-    // check that both king and rook is not threatened at the new positions
+    // get allowed castling
+    std::vector<CastleInfo> allowed_castles;
+    for (const auto& i : state.castling) {
+      if (i.side == piece->side) {
+        auto info = type_castle_info_.find(i);
+        if (info != type_castle_info_.end()) { allowed_castles.emplace_back(info->second); }
+      }
+    }
 
-    // add move (only from King side)
+    // for remaining castling, check conditions
+    for (const auto& ac : allowed_castles) {
+      // check must empty
+      for (const auto& p : ac.must_empty_list) {
+        if (board.get(p).has_value()) { continue; }
+      }
+      // todo: check destinations not threatened
+
+      // add move (only from King side)
+      moves.push_back({pos, ac.king_dest});
+    }
+
     return moves;
   };
 
