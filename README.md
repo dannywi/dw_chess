@@ -69,6 +69,7 @@ Provide I/O functionalities:
     - [DONE] change signature in get_move to include const State
     - add move
       - [DONE] add helper structs to check each castling types
+      - [DONE] list out test cases to fulfill
       - create helper function to get pieces that threaten a position
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
