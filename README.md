@@ -68,7 +68,7 @@ Provide I/O functionalities:
     - [DONE] add state (class for KQkq)
     - [DONE] change signature in get_move to include const State
     - add move
-      - add helper structs to check each castling types
+      - [DONE] add helper structs to check each castling types
       - create helper function to get pieces that threaten a position
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
@@ -134,3 +134,4 @@ Provide I/O functionalities:
 - add edge case tests for type_list utils, e.g. with zero template param
 - make FebLib receive a state object, remove its members
 - allow castling to be done by moving rook
+- make castle info compile time
