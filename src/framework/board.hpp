@@ -32,7 +32,7 @@ class Board {
 
   using MoverUpdaterList = utils::type_list<legal_move::MoverBasic, legal_move::UpdaterTurn, legal_move::MoverPawnAhead,
                                             legal_move::MoverPawnTake>;
-
+  // todo: static check here for no duplicated types
  public:
   Board() {}
   Board(std::string_view fen_str) { init(fen_str); }

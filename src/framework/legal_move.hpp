@@ -286,6 +286,9 @@ class MoverCastling {
   static std::map<Piece, CastleInfo> type_castle_info_;
 
  public:
+  // todo: add ability to move from rook
+  static constexpr TypesT<1> TargetTypes{Type::KING};
+
   MoverCastling() { init(); }
 
   void init() {
