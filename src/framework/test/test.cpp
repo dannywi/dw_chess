@@ -294,7 +294,7 @@ TEST(BOARD, Castling01) {
   b.move({{"f8"}, {"c5"}});
 
   // castling king side both sides
-  // EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"g1"}}));
+  // EXPECT_TRUE(is_legal_king_side_white());
   // EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"h8"}, {{"e8"}, {"g8"}}));
 
   // castling queen side both sides

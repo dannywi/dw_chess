@@ -70,7 +70,8 @@ Provide I/O functionalities:
     - add move
       - [DONE] add helper structs to check each castling types
       - [DONE] list out test cases to fulfill
-      - create helper function to get pieces that threaten a position
+      - add restriction: cannot castle if under threat (is this King only?)
+      - add restriction: cannot castle if the destination is under threat (is this King only?)
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
@@ -136,3 +137,12 @@ Provide I/O functionalities:
 - make FebLib receive a state object, remove its members
 - allow castling to be done by moving rook
 - make castle info compile time
+- get_legal_move has the original position passed in twice, in pos and move.from, remove this redundancy
+
+// LATEST TODO:
+- because the static constexpr std::map in MoverCastling doesn't work (std::map cannot be constructed at compile time),
+  - create a compile time constructible map, in shared
+  - create tests for it
+  - use it in place of std::map in MoverCastling
+  - add MoverCastling to board typelist
+  - uncomment the prewritten test cases
