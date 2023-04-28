@@ -67,11 +67,17 @@ Provide I/O functionalities:
   - support castling (another state in board)
     - [DONE] add state (class for KQkq)
     - [DONE] change signature in get_move to include const State
-    - add move
+    - [DONE] add move
       - [DONE] add helper structs to check each castling types
       - [DONE] list out test cases to fulfill
-      - add restriction: cannot castle if under threat (is this King only?)
-      - add restriction: cannot castle if the destination is under threat (is this King only?)
+      - [DONE] create a compile time constructible map, in shared
+      - [DONE] create tests for it, using struct keys and values
+      - [DONE] use it in place of std::map in MoverCastling
+      - [DONE] init state_.castling with White/King, White/Queen, ...
+      - [DONE] add MoverCastling to board typelist
+    - add restrictions
+      - cannot castle if under threat (is this King only?)
+      - cannot castle if the destination is under threat (King + Rook)
     - on move, remove the castling entry afterwards
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
@@ -140,9 +146,6 @@ Provide I/O functionalities:
 - get_legal_move has the original position passed in twice, in pos and move.from, remove this redundancy
 
 // LATEST TODO:
-- because the static constexpr std::map in MoverCastling doesn't work (std::map cannot be constructed at compile time),
-  - [DONE] create a compile time constructible map, in shared
-  - [DONE] create tests for it, using struct keys and values
-  - use it in place of std::map in MoverCastling
-  - add MoverCastling to board typelist
-  - uncomment the prewritten test cases
+- continue castling:
+  - cannot castle if threatened
+  - remove entry from state_.castling on call updaters

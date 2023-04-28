@@ -31,6 +31,7 @@ class TaggedArithmeticT {
   TaggedArithmeticT operator+(TaggedArithmeticT o) const { return v_ + o.v_; }
   TaggedArithmeticT operator-(TaggedArithmeticT o) const { return v_ - o.v_; }
   bool operator==(TaggedArithmeticT o) const { return v_ == o.v_; }
+  bool operator!=(TaggedArithmeticT o) const { return !operator==(o); }
 
   // with fundamental types
   template <typename U, typename = fund_check<U>>
@@ -52,6 +53,8 @@ class TaggedArithmeticT {
   bool operator<(U v) const {
     return v_ < v;
   }
+
+  bool operator<(TaggedArithmeticT o) const { return v_ < o.v_; }
 
   template <typename U, typename = fund_check<U>>
   bool operator<=(U v) const {

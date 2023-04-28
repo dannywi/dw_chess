@@ -269,33 +269,48 @@ TEST(BOARD, LegalMoves04) {
   EXPECT_FALSE(dwc::legal_move::is_legal_move(b, {"b1"}, {{"b1"}, {"d3"}}));
 }
 
+namespace test {
+bool is_legal_king_side_white(const dwc::Board& b) {
+  return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"g1"}});
+};
+bool is_legal_queen_side_white(const dwc::Board& b) {
+  return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"c1"}});
+};
+bool is_legal_king_side_black(const dwc::Board& b) {
+  return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"g8"}});
+};
+bool is_legal_queen_side_black(const dwc::Board& b) {
+  return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"c8"}});
+};
+}  // namespace test
+
 TEST(BOARD, Castling01) {
   dwc::Board b;
   b.reset_position();
-
-  auto is_legal_king_side_white = [&b]() { return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"g1"}}); };
-  auto is_legal_king_side_black = [&b]() { return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"g8"}}); };
 
   b.move({{"e2"}, {"e4"}});
   b.move({{"e7"}, {"e5"}});
 
   // castling king side both sides not allowed yet
-  EXPECT_FALSE(is_legal_king_side_white());
-  EXPECT_FALSE(is_legal_king_side_black());
+  EXPECT_FALSE(test::is_legal_king_side_white(b));
+  EXPECT_FALSE(test::is_legal_king_side_black(b));
 
   b.move({{"g1"}, {"f3"}});
   b.move({{"g8"}, {"f6"}});
 
   // castling king side both sides not allowed yet
-  EXPECT_FALSE(is_legal_king_side_white());
-  EXPECT_FALSE(is_legal_king_side_black());
+  EXPECT_FALSE(test::is_legal_king_side_white(b));
+  EXPECT_FALSE(test::is_legal_king_side_black(b));
 
   b.move({{"f1"}, {"c4"}});
   b.move({{"f8"}, {"c5"}});
 
-  // castling king side both sides
-  // EXPECT_TRUE(is_legal_king_side_white());
-  // EXPECT_TRUE(dwc::legal_move::is_legal_move(b, {"h8"}, {{"e8"}, {"g8"}}));
+  // can castle king side now, both sides
+  EXPECT_TRUE(test::is_legal_king_side_white(b));
+  EXPECT_TRUE(test::is_legal_king_side_black(b));
+
+  EXPECT_FALSE(test::is_legal_queen_side_white(b));
+  EXPECT_FALSE(test::is_legal_queen_side_black(b));
 
   // castling queen side both sides
 
@@ -305,14 +320,24 @@ TEST(BOARD, Castling01) {
   // repeat, castle, then move until king is back into original position, confirm castling is not allowed
   // continue with moving rook back, confirm castling is not allowed
 
+  // dwc::display(b);
+}
+TEST(BOARD, Castling02) {
+  dwc::Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
   dwc::display(b);
+
+  EXPECT_FALSE(test::is_legal_king_side_white(b));
+  EXPECT_FALSE(test::is_legal_king_side_black(b));
+
+  EXPECT_TRUE(test::is_legal_queen_side_white(b));
+  EXPECT_TRUE(test::is_legal_queen_side_black(b));
 }
 
 TEST(BOARD, EnPassant01) {
   dwc::Board b{"rnbqkbnr/pp1ppppp/2p5/4P3/8/8/PPPP1PPP/RNBQKBNR b"};
   b.move({{"d7"}, {"d5"}});
 
-  dwc::display(b);
+  // dwc::display(b);
 
   // en passant available
   // auto moves = get_moves(b, {"e5"});

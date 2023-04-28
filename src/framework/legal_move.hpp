@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "board.hpp"
+#include "src/shared/static_map.hpp"
 
 namespace dwc::legal_move {
 
@@ -275,51 +276,50 @@ class UpdaterTurn {
 };
 
 class MoverCastling {
-  // todo: make this compile time
   struct CastleInfo {
-    std::vector<Pos> must_empty_list;
+    Pos king_pos;
     Pos king_dest;
     Pos rook_pos;
     Pos rook_dest;
   };
 
-  static std::map<Piece, CastleInfo> type_castle_info_;
+  static constexpr utils::Map<Piece, CastleInfo, 4> type_castle_info_{{
+      std::make_pair<Piece, CastleInfo>({Type::KING, Side::WHITE}, {{"e1"}, {"g1"}, {"h1"}, {"f1"}}),
+      std::make_pair<Piece, CastleInfo>({Type::QUEEN, Side::WHITE}, {{"e1"}, {"c1"}, {"a1"}, {"d1"}}),
+      std::make_pair<Piece, CastleInfo>({Type::KING, Side::BLACK}, {{"e8"}, {"g8"}, {"h8"}, {"f8"}}),
+      std::make_pair<Piece, CastleInfo>({Type::QUEEN, Side::BLACK}, {{"e8"}, {"c8"}, {"a8"}, {"d8"}}),
+  }};
 
  public:
   // todo: add ability to move from rook
   static constexpr TypesT<1> TargetTypes{Type::KING};
 
-  MoverCastling() { init(); }
-
-  void init() {
-    type_castle_info_ = {
-        {{Type::KING, Side::WHITE}, {{{"f1"}, {"g1"}}, {"g1"}, {"h1"}, {"f1"}}},
-        {{Type::QUEEN, Side::WHITE}, {{{"b1"}, {"c1"}, {"d1"}}, {"c1"}, {"a1"}, {"d1"}}},
-        {{Type::KING, Side::BLACK}, {{{"f8"}, {"g8"}}, {"g8"}, {"h8"}, {"f8"}}},
-        {{Type::QUEEN, Side::BLACK}, {{{"b8"}, {"c8"}, {"d8"}}, {"c8"}, {"a8"}, {"d8"}}},
-    };
-  }
-
   static MovesT get_moves(const dwc::Board& board, const dwc::State& state, Pos pos) {
     auto piece = board.get(pos);
     if (!piece.has_value() || piece->type != Type::KING) { return {}; }
 
-    MovesT moves;
     // get allowed castling
     std::vector<CastleInfo> allowed_castles;
     for (const auto& i : state.castling) {
-      if (i.side == piece->side) {
-        auto info = type_castle_info_.find(i);
-        if (info != type_castle_info_.end()) { allowed_castles.emplace_back(info->second); }
-      }
+      if (i.side == piece->side) { allowed_castles.emplace_back(type_castle_info_[i]); }
     }
 
     // for remaining castling, check conditions
+    MovesT moves;
     for (const auto& ac : allowed_castles) {
       // check must empty
-      for (const auto& p : ac.must_empty_list) {
-        if (board.get(p).has_value()) { continue; }
+      auto sort_horz = [](Pos a, Pos b) { return (a.file < b.file) ? std::make_pair(a, b) : std::make_pair(b, a); };
+      std::pair<Pos, Pos> must_empty = sort_horz(ac.king_pos, ac.rook_pos);
+      bool empty = true;
+      for (Pos p{must_empty.first.file + 1, must_empty.first.rank}; p.file != must_empty.second.file;
+           p.file = p.file + 1) {
+        if (board.get(p).has_value()) {
+          empty = false;
+          break;
+        }
       }
+      if (!empty) continue;
+
       // todo: check destinations not threatened
 
       // add move (only from King side)

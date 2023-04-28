@@ -13,6 +13,7 @@ class MoverBasic;
 class UpdaterTurn;
 class MoverPawnAhead;
 class MoverPawnTake;
+class MoverCastling;
 }  // namespace legal_move
 
 class Board {
@@ -28,10 +29,11 @@ class Board {
     dwc::fen::FenParser fp(fen_str);
     state_.board = fp.get_board_pos();
     state_.turn = fp.get_turn_side().value_or(Side::WHITE);
+    state_.castling = fp.get_castling();
   }
 
   using MoverUpdaterList = utils::type_list<legal_move::MoverBasic, legal_move::UpdaterTurn, legal_move::MoverPawnAhead,
-                                            legal_move::MoverPawnTake>;
+                                            legal_move::MoverPawnTake, legal_move::MoverCastling>;
   // todo: static check here for no duplicated types
  public:
   Board() {}
@@ -39,10 +41,11 @@ class Board {
 
   std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, state_.board); }
 
-  void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"); }
+  void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"); }
 
   void move(Move move);
   MovesT get_moves(Pos pos) const;
+  void dump_moves(Pos pos) const;
   const State& get_state() const { return state_; }
 
   template <typename TL>

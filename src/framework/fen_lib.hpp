@@ -100,6 +100,7 @@ class FenParser {
 
   dwc::BoardT get_board_pos() const { return board_; }
   std::optional<dwc::Side> get_turn_side() const { return turn_side_; }
+  std::set<dwc::Piece> get_castling() const { return castling_; }
 };
 
 }  // namespace dwc::fen
