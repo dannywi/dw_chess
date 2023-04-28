@@ -1,5 +1,7 @@
 #include "board.hpp"
 
+#include <iostream>
+
 #include "legal_move.hpp"
 
 namespace dwc {
@@ -16,6 +18,12 @@ MovesT Board::get_moves(Pos pos) const {
   MovesT moves;
   call_movers<MoverUpdaterList>(pos, moves);
   return moves;
+}
+
+void Board::dump_moves(Pos pos) const {
+  auto moves = get_moves(pos);
+  std::cout << "Available Moves " << pos << std::endl;
+  for (const auto& i : moves) { std::cout << "- " << i << std::endl; }
 }
 
 void Board::move(Move move) {

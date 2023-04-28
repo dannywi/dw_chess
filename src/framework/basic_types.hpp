@@ -37,8 +37,8 @@ struct Pos {
   using RankT = utils::TaggedArithmeticT<20, int8_t>;
   FileT file;
   RankT rank;
-  Pos(FileT file, RankT rank) : file(file), rank(rank) {}
-  Pos(std::string_view pos) {
+  constexpr Pos(FileT file, RankT rank) : file(file), rank(rank) {}
+  constexpr Pos(std::string_view pos) {
     auto check_pos = [pos]() { return pos.size() == 2; };
     auto check_file = [pos]() {
       auto v = pos[0];
@@ -136,7 +136,8 @@ std::map<char, Piece> getCharPieceMap() {
 struct State {
   BoardT board;
   std::optional<Side> turn;
-  std::set<dwc::Piece> castling;
+  std::set<dwc::Piece> castling{
+      {Type::KING, Side::WHITE}, {Type::QUEEN, Side::WHITE}, {Type::KING, Side::BLACK}, {Type::QUEEN, Side::BLACK}};
 };
 
 }  // namespace dwc
