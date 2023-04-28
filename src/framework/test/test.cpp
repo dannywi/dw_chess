@@ -322,15 +322,30 @@ TEST(BOARD, Castling01) {
 
   // dwc::display(b);
 }
+
 TEST(BOARD, Castling02) {
-  dwc::Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
-  dwc::display(b);
+  {
+    dwc::Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
+    // dwc::display(b);
 
-  EXPECT_FALSE(test::is_legal_king_side_white(b));
-  EXPECT_FALSE(test::is_legal_king_side_black(b));
+    EXPECT_FALSE(test::is_legal_king_side_white(b));
+    EXPECT_FALSE(test::is_legal_king_side_black(b));
 
-  EXPECT_TRUE(test::is_legal_queen_side_white(b));
-  EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    EXPECT_TRUE(test::is_legal_queen_side_white(b));
+    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+  }
+
+  {
+    // almost same setting, but rook not in place
+    dwc::Board b{"p3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/4KBNR w KQkq"};
+    dwc::display(b);
+
+    EXPECT_FALSE(test::is_legal_king_side_white(b));
+    EXPECT_FALSE(test::is_legal_king_side_black(b));
+
+    EXPECT_FALSE(test::is_legal_queen_side_white(b));
+    EXPECT_FALSE(test::is_legal_queen_side_black(b));
+  }
 }
 
 TEST(BOARD, EnPassant01) {
