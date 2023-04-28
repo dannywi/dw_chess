@@ -206,7 +206,7 @@ class MoverBasic {
     return get_moves_from_mover(board, piece.value(), pos, get_mover_dict()[piece.value().ordinal()]);
   };
 
-  static void update_state(State&, Move) {}
+  static void update_state(State&, Piece, Move) {}
 };
 
 class MoverPawnAhead {
@@ -233,7 +233,7 @@ class MoverPawnAhead {
     return moves;
   };
 
-  static void update_state(State&, Move) {}
+  static void update_state(State&, Piece, Move) {}
 };
 
 class MoverPawnTake {
@@ -262,7 +262,7 @@ class MoverPawnTake {
     return moves;
   };
 
-  static void update_state(State&, Move) {}
+  static void update_state(State&, Piece, Move) {}
 };
 
 class UpdaterTurn {
@@ -272,7 +272,9 @@ class UpdaterTurn {
 
   static MovesT get_moves(const dwc::Board&, const dwc::State&, Pos) { return {}; };
 
-  static void update_state(State& state, Move) { state.turn = state.turn == Side::BLACK ? Side::WHITE : Side::BLACK; }
+  static void update_state(State& state, Piece, Move) {
+    state.turn = state.turn == Side::BLACK ? Side::WHITE : Side::BLACK;
+  }
 };
 
 class MoverCastling {
@@ -291,8 +293,7 @@ class MoverCastling {
   }};
 
  public:
-  // todo: add ability to move from rook
-  static constexpr TypesT<1> TargetTypes{Type::KING};
+  static constexpr TypesT<2> TargetTypes{Type::KING, Type::ROOK};
 
   static MovesT get_moves(const dwc::Board& board, const dwc::State& state, Pos pos) {
     auto piece = board.get(pos);
@@ -333,9 +334,19 @@ class MoverCastling {
     return moves;
   };
 
-  static void update_state(State& state, Move move) {
-    // if move is one of 4 castling moves, remove corresponding castling
-    // if king or rook moved, remove corresponding castling
+  static void update_state(State& state, Piece piece, Move move) {
+    if (piece.type == Type::KING) {
+      state.castling.erase(piece);
+      state.castling.erase({Type::QUEEN, piece.side});
+    } else if (piece.type == Type::ROOK) {
+      auto is_queen_rook = [](Pos p) { return p == Pos{"a1"} || p == Pos{"a8"}; };
+      auto is_king_rook = [](Pos p) { return p == Pos{"h1"} || p == Pos{"h8"}; };
+      if (is_queen_rook(move.fr) || is_queen_rook(move.to)) {
+        state.castling.erase({Type::QUEEN, piece.side});
+      } else if (is_king_rook(move.fr) || is_king_rook(move.to)) {
+        state.castling.erase({Type::KING, piece.side});
+      }
+    }
   }
 };
 
