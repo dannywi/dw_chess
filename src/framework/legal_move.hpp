@@ -307,6 +307,10 @@ class MoverCastling {
     // for remaining castling, check conditions
     MovesT moves;
     for (const auto& ac : allowed_castles) {
+      // check if rook is in position (theoretically not necessary, but just in case we allow different chess rules)
+      auto p = board.get(ac.rook_pos);
+      if (!p.has_value() || p->side != piece->side || p->type != Type::ROOK) continue;
+
       // check must empty
       auto sort_horz = [](Pos a, Pos b) { return (a.file < b.file) ? std::make_pair(a, b) : std::make_pair(b, a); };
       std::pair<Pos, Pos> must_empty = sort_horz(ac.king_pos, ac.rook_pos);
