@@ -69,7 +69,7 @@ class Board {
     if (!piece.has_value()) return;
 
     using T = dwc::utils::head_t<TL>;
-    if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, move); }
+    if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, *piece, move); }
 
     using TAIL = dwc::utils::tail_t<TL>;
     if constexpr (dwc::utils::size_v < TAIL >> 0) call_updaters<TAIL>(state, move);
