@@ -369,8 +369,6 @@ TEST(BOARD, Castling03) {
 
   {  // move queen rook
     dwc::Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
-    dwc::display(b);
-
     EXPECT_TRUE(test::is_legal_king_side_white(b));
     EXPECT_TRUE(test::is_legal_king_side_black(b));
     EXPECT_TRUE(test::is_legal_queen_side_white(b));
@@ -395,14 +393,12 @@ TEST(BOARD, Castling03) {
 
   {  // move king rook
     dwc::Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
-    dwc::display(b);
-
     EXPECT_TRUE(test::is_legal_king_side_white(b));
     EXPECT_TRUE(test::is_legal_king_side_black(b));
     EXPECT_TRUE(test::is_legal_queen_side_white(b));
     EXPECT_TRUE(test::is_legal_queen_side_black(b));
 
-    // move queen rook
+    // move king rook
     b.move({{"h1"}, {"g1"}});
     EXPECT_TRUE(test::is_legal_queen_side_white(b));
     EXPECT_FALSE(test::is_legal_king_side_white(b));
@@ -418,7 +414,23 @@ TEST(BOARD, Castling03) {
     EXPECT_TRUE(test::is_legal_queen_side_black(b));
     EXPECT_FALSE(test::is_legal_king_side_black(b));
   }
-  // take queen rook
+
+  {  // take queen rook
+    dwc::Board b{"r3k2r/pppq1ppp/1N1p4/4pbB1/8/1n1P4/PPPQPPPP/R3K2R w KQkq"};
+    dwc::display(b);
+    EXPECT_TRUE(test::is_legal_king_side_white(b));
+    EXPECT_TRUE(test::is_legal_king_side_black(b));
+    EXPECT_TRUE(test::is_legal_queen_side_white(b));
+    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+
+    // todo: first support taking
+    // take queen rook
+    // b.move({{"b6"}, {"h1"}});
+    // dwc::display(b);
+    // EXPECT_FALSE(test::is_legal_queen_side_white(b));
+    // EXPECT_TRUE(test::is_legal_king_side_white(b));
+  }
+
   // take king rook
 }
 

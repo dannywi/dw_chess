@@ -79,6 +79,7 @@ Provide I/O functionalities:
       - cannot castle if under threat (is this King only?)
       - cannot castle if the destination is under threat (King + Rook)
     - [DONE] on move, remove the castling entry afterwards
+    - add tests to confirm castling is not possible after the rook is taken
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
 - move validation / state:
@@ -146,6 +147,7 @@ Provide I/O functionalities:
 - get_legal_move has the original position passed in twice, in pos and move.from, remove this redundancy
 
 // LATEST TODO:
+- check why taking doesn't work
 - continue castling:
-  - cannot castle after rook is taken from original place
-  - cannot castle if threatened
+  - cannot castle if under threat (is this King only?)
+  - cannot castle if the destination is under threat (King + Rook)
