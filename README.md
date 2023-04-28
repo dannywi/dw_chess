@@ -142,7 +142,7 @@ Provide I/O functionalities:
 // LATEST TODO:
 - because the static constexpr std::map in MoverCastling doesn't work (std::map cannot be constructed at compile time),
   - [DONE] create a compile time constructible map, in shared
-  - create tests for it, using struct keys and values
+  - [DONE] create tests for it, using struct keys and values
   - use it in place of std::map in MoverCastling
   - add MoverCastling to board typelist
   - uncomment the prewritten test cases

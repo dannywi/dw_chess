@@ -7,6 +7,7 @@ template <typename K, typename V, size_t N>
 class Map {
  public:
   using data_t = std::array<std::pair<K, V>, N>;
+  // todo: construct from variadic params (K, V, K, V, ....)
   constexpr Map(const data_t& d) : data_(d) {}
   V operator[](K k) const {
     // todo: make non linear complexity
