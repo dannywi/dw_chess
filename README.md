@@ -122,13 +122,15 @@ Provide I/O functionalities:
 - split test cases per include file or namespace
 - include statement in tests, remove full paths
 - [DONE] add script to run buildifier and clang-format
-- add gha to do buildifier and clang format automatically on commit
-- display should be in it's own folder?
-- replace pragma once with proper macros
-- set different namespaces for the header libs
 - [DONE] make RankT and FileT non-convertible
   - [DONE] create a base in utils, tests
   - [DONE] replace implementation in framework
+- [DONE] make MoveDiff constexpr mapping
+- include statement in tests, remove full paths
+- [DONE] add gha to do buildifier and clang format automatically on commit
+- display should be in it's own folder?
+- replace pragma once with proper macros
+- set different namespaces for the header libs
 - [DONE] make MoverDictT (Piece -> Mover) constexpr
   - [DONE] create an ordinal for piece (make hasher public)
   - [DONE] use the ordinal as key
