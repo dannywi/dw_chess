@@ -127,7 +127,7 @@ Provide I/O functionalities:
   - [DONE] replace implementation in framework
 - [DONE] make MoveDiff constexpr mapping
 - include statement in tests, remove full paths
-- add gha to do buildifier and clang format automatically on commit
+- [DONE] add gha to do buildifier and clang format automatically on commit
 - display should be in it's own folder?
 - replace pragma once with proper macros
 - set different namespaces for the header libs
