@@ -270,47 +270,57 @@ TEST(BOARD, LegalMoves04) {
 }
 
 namespace test {
-bool is_legal_king_side_white(const dwc::Board& b) {
-  return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"g1"}});
+template <bool EXP>
+struct KingWhite {
+  static bool check(const dwc::Board& b) { return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"g1"}}) == EXP; }
 };
-bool is_legal_queen_side_white(const dwc::Board& b) {
-  return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"c1"}});
+
+template <bool EXP>
+struct QueenWhite {
+  static bool check(const dwc::Board& b) { return dwc::legal_move::is_legal_move(b, {"e1"}, {{"e1"}, {"c1"}}) == EXP; }
 };
-bool is_legal_king_side_black(const dwc::Board& b) {
-  return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"g8"}});
+
+template <bool EXP>
+struct KingBlack {
+  static bool check(const dwc::Board& b) { return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"g8"}}) == EXP; }
 };
-bool is_legal_queen_side_black(const dwc::Board& b) {
-  return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"c8"}});
+
+template <bool EXP>
+struct QueenBlack {
+  static bool check(const dwc::Board& b) { return dwc::legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"c8"}}) == EXP; }
 };
+
+template <typename... F>
+void expect_true(const dwc::Board& b) {
+  EXPECT_TRUE((F::check(b) && ...));
+}
+
 }  // namespace test
 
 TEST(BOARD, Castling01) {
   dwc::Board b;
   b.reset_position();
 
+  using namespace test;
+  expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
+
   b.move({{"e2"}, {"e4"}});
   b.move({{"e7"}, {"e5"}});
 
   // castling king side both sides not allowed yet
-  EXPECT_FALSE(test::is_legal_king_side_white(b));
-  EXPECT_FALSE(test::is_legal_king_side_black(b));
+  expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
 
   b.move({{"g1"}, {"f3"}});
   b.move({{"g8"}, {"f6"}});
 
   // castling king side both sides not allowed yet
-  EXPECT_FALSE(test::is_legal_king_side_white(b));
-  EXPECT_FALSE(test::is_legal_king_side_black(b));
+  expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
 
   b.move({{"f1"}, {"c4"}});
   b.move({{"f8"}, {"c5"}});
 
   // can castle king side now, both sides
-  EXPECT_TRUE(test::is_legal_king_side_white(b));
-  EXPECT_TRUE(test::is_legal_king_side_black(b));
-
-  EXPECT_FALSE(test::is_legal_queen_side_white(b));
-  EXPECT_FALSE(test::is_legal_queen_side_black(b));
+  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
   // castling queen side both sides
 
@@ -324,111 +334,87 @@ TEST(BOARD, Castling01) {
 }
 
 TEST(BOARD, Castling02) {
+  using namespace test;
   {
     dwc::Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
     // dwc::display(b);
-
-    EXPECT_FALSE(test::is_legal_king_side_white(b));
-    EXPECT_FALSE(test::is_legal_king_side_black(b));
-
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
   }
 
   {
     // almost same setting, but rook not in place
     dwc::Board b{"p3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/4KBNR w KQkq"};
     // dwc::display(b);
-
-    EXPECT_FALSE(test::is_legal_king_side_white(b));
-    EXPECT_FALSE(test::is_legal_king_side_black(b));
-
-    EXPECT_FALSE(test::is_legal_queen_side_white(b));
-    EXPECT_FALSE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
   }
 }
 
 TEST(BOARD, Castling03) {
+  using namespace test;
   {  // move king
     dwc::Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
 
     // move the kings
     b.move({{"e1"}, {"d1"}});
-    EXPECT_FALSE(test::is_legal_queen_side_white(b));
+    // EXPECT_FALSE(test::is_legal_queen_side_white(b));
+    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>(b);
     b.move({{"e8"}, {"e7"}});
-    EXPECT_FALSE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
 
     // move them back, but should still not be able to castle
     b.move({{"d1"}, {"e1"}});
-    EXPECT_FALSE(test::is_legal_queen_side_white(b));
+    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
     b.move({{"e7"}, {"e8"}});
-    EXPECT_FALSE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
   }
 
   {  // move queen rook
     dwc::Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
-    EXPECT_TRUE(test::is_legal_king_side_white(b));
-    EXPECT_TRUE(test::is_legal_king_side_black(b));
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 
     // move queen rook
     b.move({{"a1"}, {"d1"}});
-    EXPECT_FALSE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_king_side_white(b));
+    expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<true>>(b);
     b.move({{"a8"}, {"c8"}});
-    EXPECT_FALSE(test::is_legal_queen_side_black(b));
-    EXPECT_TRUE(test::is_legal_king_side_black(b));
+    expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
     // move them back, but should still not be able to castle
     b.move({{"d1"}, {"a1"}});
-    EXPECT_FALSE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_king_side_white(b));
+    expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
     b.move({{"c8"}, {"a8"}});
-    EXPECT_FALSE(test::is_legal_queen_side_black(b));
-    EXPECT_TRUE(test::is_legal_king_side_black(b));
+    expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
   }
 
   {  // move king rook
     dwc::Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
-    EXPECT_TRUE(test::is_legal_king_side_white(b));
-    EXPECT_TRUE(test::is_legal_king_side_black(b));
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 
     // move king rook
     b.move({{"h1"}, {"g1"}});
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_FALSE(test::is_legal_king_side_white(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
     b.move({{"h8"}, {"f8"}});
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
-    EXPECT_FALSE(test::is_legal_king_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
 
     // move them back, but should still not be able to castle
     b.move({{"g1"}, {"h1"}});
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_FALSE(test::is_legal_king_side_white(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
     b.move({{"f8"}, {"h8"}});
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
-    EXPECT_FALSE(test::is_legal_king_side_black(b));
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
   }
 
   {  // take queen rook
     dwc::Board b{"r3k2r/pppq1ppp/1N1p4/4pbB1/8/1n1P4/PPPQPPPP/R3K2R w KQkq"};
     dwc::display(b);
-    EXPECT_TRUE(test::is_legal_king_side_white(b));
-    EXPECT_TRUE(test::is_legal_king_side_black(b));
-    EXPECT_TRUE(test::is_legal_queen_side_white(b));
-    EXPECT_TRUE(test::is_legal_queen_side_black(b));
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 
-    // todo: first support taking
     // take queen rook
-    // b.move({{"b6"}, {"h1"}});
-    // dwc::display(b);
-    // EXPECT_FALSE(test::is_legal_queen_side_white(b));
-    // EXPECT_TRUE(test::is_legal_king_side_white(b));
+    b.move({{"b6"}, {"a8"}});
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<false>>(b);
+
+    // take queen rook
+    b.move({{"b3"}, {"a1"}});
+    expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
   }
 
   // take king rook
