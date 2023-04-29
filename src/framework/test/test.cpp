@@ -306,31 +306,38 @@ TEST(BOARD, Castling01) {
 
   b.move({{"e2"}, {"e4"}});
   b.move({{"e7"}, {"e5"}});
-
   // castling king side both sides not allowed yet
   expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
 
   b.move({{"g1"}, {"f3"}});
   b.move({{"g8"}, {"f6"}});
-
   // castling king side both sides not allowed yet
   expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
 
   b.move({{"f1"}, {"c4"}});
   b.move({{"f8"}, {"c5"}});
-
   // can castle king side now, both sides
   expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
-  // castling queen side both sides
+  b.move({{"d2"}, {"d3"}});
+  b.move({{"d7"}, {"d6"}});
+  // still cannot castle queen side
+  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
-  // move both sides, confirm position after move is correct
+  b.move({{"c1"}, {"g5"}});
+  b.move({{"c8"}, {"g4"}});
+  // still cannot castle queen side
+  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
-  // repeat, but move king or rook before, and confirm castling not allowed anymore
-  // repeat, castle, then move until king is back into original position, confirm castling is not allowed
-  // continue with moving rook back, confirm castling is not allowed
+  b.move({{"d1"}, {"d2"}});
+  b.move({{"d8"}, {"d7"}});
+  // still cannot castle queen side
+  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 
-  // dwc::display(b);
+  b.move({{"b1"}, {"c3"}});
+  b.move({{"b8"}, {"a6"}});
+  // still cannot castle queen side
+  expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 }
 
 TEST(BOARD, Castling02) {
@@ -405,19 +412,31 @@ TEST(BOARD, Castling03) {
 
   {  // take queen rook
     dwc::Board b{"r3k2r/pppq1ppp/1N1p4/4pbB1/8/1n1P4/PPPQPPPP/R3K2R w KQkq"};
-    dwc::display(b);
+    // dwc::display(b);
     expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 
-    // take queen rook
+    // black side
     b.move({{"b6"}, {"a8"}});
     expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<false>>(b);
 
-    // take queen rook
+    // white side
     b.move({{"b3"}, {"a1"}});
     expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
   }
 
   // take king rook
+  {  // take queen rook
+    dwc::Board b{"r3k2r/pppq1ppp/1N1p2N1/4pbB1/8/1n1P2n1/PPPQPPPP/R3K2R w KQkq"};
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
+
+    // black side
+    b.move({{"g6"}, {"h8"}});
+    expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
+
+    // white side
+    b.move({{"g3"}, {"h1"}});
+    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
+  }
 }
 
 TEST(BOARD, EnPassant01) {
