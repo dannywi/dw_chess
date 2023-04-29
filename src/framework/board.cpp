@@ -36,4 +36,24 @@ void Board::move(Move move) {
 
   call_updaters<MoverUpdaterList>(state_, move);
 }
+
+bool Board::is_threatened(Pos pos) const {
+  auto tgt = get(pos);
+  if (!tgt.has_value()) { return false; }
+
+  // todo: create an iterator, using generator coroutine if possible
+  for (char rank = '8'; rank >= '1'; --rank) {
+    for (char file = 'A'; file <= 'H'; ++file) {
+      Pos curr_pos{std::string{file, rank}};
+      auto curr_pcs = get(curr_pos);
+      if (!curr_pcs.has_value() || curr_pcs->side == tgt->side) { continue; }
+      auto moves = get_moves(curr_pos);
+      for (const auto& move : moves) {
+        if (move.to == pos) { return true; }
+      }
+    }
+  }
+
+  return false;
+}
 }  // namespace dwc

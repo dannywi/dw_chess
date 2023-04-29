@@ -72,7 +72,11 @@ class Board {
   void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"); }
 
   void move(Move move);
+
   MovesT get_moves(Pos pos) const;
+
+  bool is_threatened(Pos pos) const;
+
   void dump_moves(Pos pos) const;
 };
 }  // namespace dwc

@@ -231,6 +231,7 @@ TEST(BOARD, LegalMoves03) {
   dwc::Board b;
   b.reset_position();
   b.move({{"e2"}, {"e4"}});
+  EXPECT_FALSE(b.is_threatened({"e4"}));
   b.move({{"d7"}, {"d5"}});
   // dwc::display(b);
 
@@ -238,6 +239,8 @@ TEST(BOARD, LegalMoves03) {
   EXPECT_EQ(moves.size(), 2);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"e5"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"e4"}, {"d5"}}));
+  EXPECT_TRUE(b.is_threatened({"e4"}));
+  EXPECT_TRUE(b.is_threatened({"d5"}));
 
   b.move({{"c2"}, {"c4"}});
   // dwc::display(b);
@@ -247,6 +250,9 @@ TEST(BOARD, LegalMoves03) {
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"e4"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"d4"}}));
   EXPECT_TRUE(find_me(moves, dwc::Move{{"d5"}, {"c4"}}));
+  EXPECT_TRUE(b.is_threatened({"e4"}));
+  EXPECT_TRUE(b.is_threatened({"d5"}));
+  EXPECT_TRUE(b.is_threatened({"c4"}));
 
   b.move({{"c7"}, {"c5"}});
   // dwc::display(b);
@@ -254,6 +260,12 @@ TEST(BOARD, LegalMoves03) {
   moves = b.get_moves({"c4"});
   EXPECT_EQ(moves.size(), 1);
   EXPECT_TRUE(find_me(moves, dwc::Move{{"c4"}, {"d5"}}));
+  EXPECT_FALSE(b.is_threatened({"c5"}));
+
+  // other checks
+  EXPECT_FALSE(b.is_threatened({"a2"}));
+  EXPECT_FALSE(b.is_threatened({"b8"}));
+  EXPECT_FALSE(b.is_threatened({"h5"}));
 }
 
 TEST(BOARD, LegalMoves04) {

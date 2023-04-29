@@ -156,7 +156,7 @@ Provide I/O functionalities:
 
 // LATEST TODO:
 - continue castling:
-  - create is_threatened(Pos) func
+  - [DONE] create is_threatened(Pos) func
   - add to all pieces that a move cannot result in its King being threatened
   - cannot castle if under threat (is this King only?)
   - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)

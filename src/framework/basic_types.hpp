@@ -56,7 +56,7 @@ struct Pos {
 
   Pos() = delete;
 
-  bool operator==(const Pos& p) { return file == p.file && rank == p.rank; }
+  bool operator==(const Pos& p) const { return file == p.file && rank == p.rank; }
 
   friend std::ostream& operator<<(std::ostream& os, dwc::Pos pos) {
     os << "{" << ('a' + pos.file) << pos.rank + 1 << "}";
@@ -97,9 +97,11 @@ namespace board_ut {
 void set(Pos pos, Piece piece, BoardT& board) {
   board[pos.file][pos.rank].piece = piece;
 }
+
 void clear(Pos pos, BoardT& board) {
   board[pos.file][pos.rank].piece.reset();
 }
+
 std::optional<Piece> get(Pos pos, const BoardT& board) {
   return board[pos.file][pos.rank].piece;
 }
