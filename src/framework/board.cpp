@@ -56,4 +56,24 @@ bool Board::is_threatened(Pos pos) const {
 
   return false;
 }
+
+bool Board::is_king_threatened(Side side) const {
+  std::optional<Pos> pos_king;
+  // todo: create an iterator, using generator coroutine if possible
+  for (char rank = '8'; rank >= '1'; --rank) {
+    for (char file = 'A'; file <= 'H'; ++file) {
+      Pos curr_pos{std::string{file, rank}};
+      auto curr_pcs = get(curr_pos);
+      if (curr_pcs.has_value() && curr_pcs->type == Type::KING && curr_pcs->side == side) {
+        pos_king = curr_pos;
+        break;
+      }
+    }
+  }
+
+  if (!pos_king.has_value()) throw std::logic_error("this side has no king on board");
+
+  return is_threatened(*pos_king);
+}
+
 }  // namespace dwc

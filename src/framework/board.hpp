@@ -77,6 +77,8 @@ class Board {
 
   bool is_threatened(Pos pos) const;
 
+  bool is_king_threatened(Side side) const;
+
   void dump_moves(Pos pos) const;
 };
 }  // namespace dwc

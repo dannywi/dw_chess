@@ -64,6 +64,7 @@ Provide I/O functionalities:
   - [DONE] use for change turn
   - [DONE] use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
+  - [DONE] create is_threatened(Pos) and is_king_threatened(Side) func
   - support castling (another state in board)
     - [DONE] add state (class for KQkq)
     - [DONE] change signature in get_move to include const State
@@ -156,7 +157,9 @@ Provide I/O functionalities:
 
 // LATEST TODO:
 - continue castling:
-  - [DONE] create is_threatened(Pos) func
   - add to all pieces that a move cannot result in its King being threatened
+    - add restrictor::KingThreatened, removing entries from MovesT if results in King being threatened
+    - add call_restrictors after call_movers
+- separate test files, test_fen, test_castling, test_basic_moves
   - cannot castle if under threat (is this King only?)
-  - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
+  - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction) 
