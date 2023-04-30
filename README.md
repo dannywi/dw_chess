@@ -126,14 +126,13 @@ Provide I/O functionalities:
 - use toolchain in bazel, so local and CI are aligned
 - use bazelisk to control bazel version
 - check if special moves like en passant, castling, and promotion can be abstracted
-- split test cases per include file or namespace
+- [DONE] split test cases per include file or namespace or feature
 - include statement in tests, remove full paths
 - [DONE] add script to run buildifier and clang-format
 - [DONE] make RankT and FileT non-convertible
   - [DONE] create a base in utils, tests
   - [DONE] replace implementation in framework
 - [DONE] make MoveDiff constexpr mapping
-- include statement in tests, remove full paths
 - [DONE] add gha to do buildifier and clang format automatically on commit
 - display should be in it's own folder?
 - replace pragma once with proper macros
@@ -160,6 +159,5 @@ Provide I/O functionalities:
   - add to all pieces that a move cannot result in its King being threatened
     - add restrictor::KingThreatened, removing entries from MovesT if results in King being threatened
     - add call_restrictors after call_movers
-- separate test files, test_fen, test_castling, test_basic_moves
   - cannot castle if under threat (is this King only?)
   - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction) 
