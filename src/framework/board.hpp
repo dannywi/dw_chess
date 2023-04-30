@@ -35,18 +35,18 @@ class Board {
   using MoverUpdaterList = utils::type_list<legal_move::MoverBasic, legal_move::UpdaterTurn, legal_move::MoverPawnAhead,
                                             legal_move::MoverPawnTake, legal_move::MoverCastling>;
   // todo: static check here for no duplicated types
- public:
-  Board() {}
-  Board(std::string_view fen_str) { init(fen_str); }
 
-  std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, state_.board); }
+  template <typename TL>
+  void call_updaters(State& state, Move move) const {
+    auto piece = get(move.to);
+    if (!piece.has_value()) return;
 
-  void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"); }
+    using T = dwc::utils::head_t<TL>;
+    if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, *piece, move); }
 
-  void move(Move move);
-  MovesT get_moves(Pos pos) const;
-  void dump_moves(Pos pos) const;
-  const State& get_state() const { return state_; }
+    using TAIL = dwc::utils::tail_t<TL>;
+    if constexpr (dwc::utils::size_v < TAIL >> 0) call_updaters<TAIL>(state, move);
+  }
 
   template <typename TL>
   void call_movers(Pos pos, MovesT& moves) const {
@@ -63,16 +63,22 @@ class Board {
     if constexpr (dwc::utils::size_v < TAIL >> 0) call_movers<TAIL>(pos, moves);
   }
 
-  template <typename TL>
-  void call_updaters(State& state, Move move) const {
-    auto piece = get(move.to);
-    if (!piece.has_value()) return;
+ public:
+  Board() {}
+  Board(std::string_view fen_str) { init(fen_str); }
 
-    using T = dwc::utils::head_t<TL>;
-    if (dwc::utils::contains(T::TargetTypes, piece->type)) { T::update_state(state, *piece, move); }
+  std::optional<Piece> get(Pos pos) const { return board_ut::get(pos, state_.board); }
 
-    using TAIL = dwc::utils::tail_t<TL>;
-    if constexpr (dwc::utils::size_v < TAIL >> 0) call_updaters<TAIL>(state, move);
-  }
+  void reset_position() { init("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq"); }
+
+  void move(Move move);
+
+  MovesT get_moves(Pos pos) const;
+
+  bool is_threatened(Pos pos) const;
+
+  bool is_king_threatened(Side side) const;
+
+  void dump_moves(Pos pos) const;
 };
 }  // namespace dwc
