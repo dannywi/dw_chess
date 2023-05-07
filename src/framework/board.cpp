@@ -17,6 +17,19 @@ void Board::check_move(Pos fr, Pos to) const {
 MovesT Board::get_moves(Pos pos) const {
   MovesT moves;
   call_movers<MoverUpdaterList>(pos, moves);
+
+  // auto king_is_threatened_after = [this](const Move& move) {
+  //   auto piece = this->get(move.fr);
+  //   Side side = piece->side;
+  //   Board b_copy = *this;
+  //   b_copy.move_internal(move, *piece);
+  //   return b_copy.is_king_threatened(side);
+  // };
+
+  // this cannot happen everytime, otherwise it'd loop infinitely
+  // i.e.: we need to have a "mode" for not checking king's threatened (I think this is unique, no other use-case)
+  // auto new_end = std::remove_if(moves.begin(), moves.end(), king_is_threatened_after);
+  // moves.erase(new_end, moves.end());
   return moves;
 }
 
@@ -29,11 +42,7 @@ void Board::dump_moves(Pos pos) const {
 void Board::move(Move move) {
   check_move(move.fr, move.to);
   std::optional<Piece> piece = get(move.fr);
-
-  // todo: make this atomic?
-  clear(move.fr);
-  set(move.to, piece.value());
-
+  move_internal(move, piece.value());
   call_updaters<MoverUpdaterList>(state_, move);
 }
 

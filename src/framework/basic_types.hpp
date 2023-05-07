@@ -67,7 +67,7 @@ struct Pos {
 struct Move {
   Pos fr;
   Pos to;
-  bool operator==(const Move& m) { return fr == m.fr && to == m.to; }
+  bool operator==(const Move& m) const { return fr == m.fr && to == m.to; }
 
   friend std::ostream& operator<<(std::ostream& os, const dwc::Move& move) {
     os << move.fr << " -> " << move.to;
