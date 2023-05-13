@@ -270,9 +270,70 @@ TEST(BOARD, IsThreatened03) {
 }
 
 TEST(BOARD, IsThreatened04) {
-  Board b{"8/4k3/8/8/2K1r3/8/8/8 w"};
+  Board b{"8/4k3/8/Q7/2K1r3/P7/2B5/8 w"};
   EXPECT_TRUE(b.is_king_threatened(Side::WHITE));
   EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
+
+  // bishop can move to take the threatening rook
+  auto moves = b.get_moves({"c2"});
+  EXPECT_EQ(moves.size(), 1);
+  EXPECT_TRUE(find_me(moves, Move{{"c2"}, {"e4"}}));
+
+  // other pieces can't move
+  EXPECT_TRUE(b.get_moves({"a3"}).empty());
+  EXPECT_TRUE(b.get_moves({"a5"}).empty());
+}
+
+TEST(BOARD, Pinned01) {
+  Board b{"8/k7/8/8/8/4r3/4N3/4K3 w"};
+  EXPECT_FALSE(b.is_king_threatened(Side::WHITE));
+  EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
+
+  auto moves = b.get_moves({"e2"});
+  EXPECT_TRUE(moves.empty());
+}
+
+TEST(BOARD, Pinned02) {
+  Board b{"q7/k7/8/8/3P4/4r3/6B1/7K w"};
+  EXPECT_FALSE(b.is_king_threatened(Side::WHITE));
+  EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
+
+  // bishop can only move towards the queen
+  auto moves = b.get_moves({"g2"});
+  EXPECT_EQ(moves.size(), 6);
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"f3"}}));
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"e4"}}));
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"d5"}}));
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"c6"}}));
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"b7"}}));
+  EXPECT_TRUE(find_me(moves, Move{{"g2"}, {"a8"}}));
+
+  // pawn can move
+  moves = b.get_moves({"d4"});
+  EXPECT_EQ(moves.size(), 1);
+  EXPECT_TRUE(find_me(moves, Move{{"d4"}, {"d5"}}));
+}
+
+TEST(BOARD, Pinned03) {
+  Board b{"8/k7/8/8/8/4r3/4B3/4K3 b"};
+  display(b);
+  EXPECT_FALSE(b.is_king_threatened(Side::WHITE));
+  EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
+
+  // king cannot move to a threatened position, eventhough the threatening bishop is pinned
+  auto moves = b.get_moves({"a7"});
+  EXPECT_EQ(moves.size(), 4);
+  EXPECT_FALSE(find_me(moves, Move{{"a7"}, {"a6"}}));
+}
+
+TEST(BOARD, Pinned04) {
+  Board b{"8/8/k7/1n6/8/4r3/4B3/4K3 b"};
+  EXPECT_FALSE(b.is_king_threatened(Side::WHITE));
+  EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
+
+  // knight cannot move, eventhough the threatening bishop is pinned
+  auto moves = b.get_moves({"b5"});
+  EXPECT_TRUE(moves.empty());
 }
 
 TEST(BOARD, EnPassant01) {

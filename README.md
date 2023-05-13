@@ -84,8 +84,9 @@ Provide I/O functionalities:
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
 - move validation / state:
-  - king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
+  - [DONE] king is in check -> then the only legal moves are ones that make king not in check (need to copy board)
     - [DONE] all pieces must check resulting board after move that king is not being checked
+    - [DONE] add test for pinned piece can still trigger other side's king threatened move filter
   - [DONE] rook/king moved -> can't castle on that side
   - rook/king threatened -> can't castle on that side
 - if there's no move
@@ -156,10 +157,6 @@ Provide I/O functionalities:
 
 // LATEST TODO:
 - continue castling:
-  - [DONE] add to all pieces that a move cannot result in its King being threatened
-    - [DONE] remove entries from MovesT if results in King being threatened
-    - add tests (regular non castling situation)
-    - add test for pinned piece can still trigger other side's king threatened move filter
   - cannot castle if under threat - King
   - cannot castle if under threat - Rook
   - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
