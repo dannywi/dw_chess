@@ -22,8 +22,10 @@ class Board {
 
   void check_move(Pos fr, Pos to) const;
 
-  void set(Pos pos, Piece piece) { board_ut::set(pos, piece, state_.board); }
-  void clear(Pos pos) { board_ut::clear(pos, state_.board); }
+  void move_internal(Move move, Piece piece) {
+    board_ut::clear(move.fr, state_.board);
+    board_ut::set(move.to, piece, state_.board);
+  }
 
   void init(std::string_view fen_str) {
     dwc::fen::FenParser fp(fen_str);
@@ -73,7 +75,7 @@ class Board {
 
   void move(Move move);
 
-  MovesT get_moves(Pos pos) const;
+  MovesT get_moves(Pos pos, bool checkOwnKing = true) const;
 
   bool is_threatened(Pos pos) const;
 
