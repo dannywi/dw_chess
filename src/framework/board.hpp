@@ -75,7 +75,7 @@ class Board {
 
   void move(Move move);
 
-  MovesT get_moves(Pos pos) const;
+  MovesT get_moves(Pos pos, bool checkOwnKing = true) const;
 
   bool is_threatened(Pos pos) const;
 

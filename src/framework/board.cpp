@@ -11,25 +11,29 @@ void Board::check_move(Pos fr, Pos to) const {
   if (state_.turn.has_value() && piece.value().side != state_.turn.value()) {
     throw std::logic_error("moving wrong side");
   }
-  if (!legal_move::is_legal_move(*this, fr, {fr, to})) { throw std::logic_error("not legal move"); }
+  if (!legal_move::is_legal_move(*this, fr, {fr, to})) {
+    std::ostringstream oss;
+    oss << "not legal move: " << fr << " -> " << to;
+    throw std::logic_error(oss.str());
+  }
 }
 
-MovesT Board::get_moves(Pos pos) const {
+MovesT Board::get_moves(Pos pos, bool checkOwnKing) const {
   MovesT moves;
   call_movers<MoverUpdaterList>(pos, moves);
 
-  // auto king_is_threatened_after = [this](const Move& move) {
-  //   auto piece = this->get(move.fr);
-  //   Side side = piece->side;
-  //   Board b_copy = *this;
-  //   b_copy.move_internal(move, *piece);
-  //   return b_copy.is_king_threatened(side);
-  // };
+  if (checkOwnKing) {
+    auto king_is_threatened_after = [this](const Move& move) {
+      auto piece = this->get(move.fr);
+      Side side = piece->side;
+      Board b_copy = *this;
+      b_copy.move_internal(move, *piece);
+      return b_copy.is_king_threatened(side);
+    };
+    auto new_end = std::remove_if(moves.begin(), moves.end(), king_is_threatened_after);
+    moves.erase(new_end, moves.end());
+  }
 
-  // this cannot happen everytime, otherwise it'd loop infinitely
-  // i.e.: we need to have a "mode" for not checking king's threatened (I think this is unique, no other use-case)
-  // auto new_end = std::remove_if(moves.begin(), moves.end(), king_is_threatened_after);
-  // moves.erase(new_end, moves.end());
   return moves;
 }
 
@@ -56,7 +60,8 @@ bool Board::is_threatened(Pos pos) const {
       Pos curr_pos{std::string{file, rank}};
       auto curr_pcs = get(curr_pos);
       if (!curr_pcs.has_value() || curr_pcs->side == tgt->side) { continue; }
-      auto moves = get_moves(curr_pos);
+      // pinned piece can still threaten castling or king, so don't check its king
+      auto moves = get_moves(curr_pos, false);
       for (const auto& move : moves) {
         if (move.to == pos) { return true; }
       }
