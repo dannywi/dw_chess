@@ -36,6 +36,21 @@ template <typename... F>
 void expect_true(const Board& b) {
   EXPECT_TRUE((F::check(b) && ...));
 }
+
+// do in C++11 style, somehow C++17 fold fails to call static function of the types
+template <typename... F>
+struct And;
+
+template <typename F, typename... REST>
+struct And<F, REST...> {
+  static bool fold(const Board& b) { return F::check(b) && And<REST...>::fold(b); }
+};
+
+template <>
+struct And<> {
+  static bool fold(const Board& b) { return true; }
+};
+
 }  // namespace
 
 TEST(BOARD, Castling01) {
@@ -147,12 +162,17 @@ TEST(BOARD, Castling03_MoveKingRook) {
 TEST(BOARD, Castling04_KingDestThreatened) {
   Board b{"r3k2r/ppp2ppp/3p4/4pB2/8/3P4/nPPQPPPP/R3K2R w KQkq"};
   // queen side is threatened, cannot castle
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
 }
 
 TEST(BOARD, Castling05_KingThreatened) {
   Board b{"r3k2r/ppp2ppp/3p4/1B2p3/8/6b1/PPPQP1PP/R3K2R w KQkq"};
-  display(b);
   // white king is threatened, cannot castle
-  expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling05_KingThreatenedByPinnedPiece) {
+  Board b{"r6r/ppp2ppp/3p4/1B2p2k/7b/7Q/PPP1P1PP/R3K2R w KQ"};
+  // white king is threatened by a pinned pieace, still cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
 }
