@@ -18,11 +18,12 @@ void Board::check_move(Pos fr, Pos to) const {
   }
 }
 
-MovesT Board::get_moves(Pos pos, bool checkOwnKing) const {
+MovesT Board::get_moves(Pos pos) const {
   MovesT moves;
   call_movers<MoverUpdaterList>(pos, moves);
 
-  if (checkOwnKing) {
+  // pinned piece can still threaten castling or king, so don't check its king
+  if (!is_checking_threats()) {
     auto king_is_threatened_after = [this](const Move& move) {
       auto piece = this->get(move.fr);
       Side side = piece->side;
@@ -51,17 +52,23 @@ void Board::move(Move move) {
 }
 
 bool Board::is_threatened(Pos pos) const {
+  // if necessary move this to util lib with added features
+  struct set_true {
+    bool& b;
+    set_true(bool& b) : b(b) { b = true; }
+    ~set_true() { b = false; }
+  } g{is_checking_threats_};
+
   auto tgt = get(pos);
   if (!tgt.has_value()) { return false; }
-
   // todo: create an iterator, using generator coroutine if possible
   for (char rank = '8'; rank >= '1'; --rank) {
     for (char file = 'A'; file <= 'H'; ++file) {
       Pos curr_pos{std::string{file, rank}};
+      if (pos == curr_pos) { continue; }
       auto curr_pcs = get(curr_pos);
       if (!curr_pcs.has_value() || curr_pcs->side == tgt->side) { continue; }
-      // pinned piece can still threaten castling or king, so don't check its king
-      auto moves = get_moves(curr_pos, false);
+      auto moves = get_moves(curr_pos);
       for (const auto& move : moves) {
         if (move.to == pos) { return true; }
       }

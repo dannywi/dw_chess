@@ -149,3 +149,10 @@ TEST(BOARD, Castling04_KingDestThreatened) {
   // queen side is threatened, cannot castle
   expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
 }
+
+TEST(BOARD, Castling05_KingThreatened) {
+  Board b{"r3k2r/ppp2ppp/3p4/1B2p3/8/6b1/PPPQP1PP/R3K2R w KQkq"};
+  display(b);
+  // white king is threatened, cannot castle
+  expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
+}

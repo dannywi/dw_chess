@@ -316,7 +316,7 @@ TEST(BOARD, Pinned02) {
 
 TEST(BOARD, Pinned03) {
   Board b{"8/k7/8/8/8/4r3/4B3/4K3 b"};
-  display(b);
+  // display(b);
   EXPECT_FALSE(b.is_king_threatened(Side::WHITE));
   EXPECT_FALSE(b.is_king_threatened(Side::BLACK));
 

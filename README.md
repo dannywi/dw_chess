@@ -77,8 +77,7 @@ Provide I/O functionalities:
       - [DONE] init state_.castling with White/King, White/Queen, ...
       - [DONE] add MoverCastling to board typelist
     - add restrictions
-      - cannot castle if under threat (is this King only?)
-      - cannot castle if the destination is under threat (King + Rook)
+      - [DONE] make a mode for is_checking_threats. while checking threats we don't need to get castling move, because castling move can never take opponent's piece. also when checking this we don't need to check pinned.
     - [DONE] on move, remove the castling entry afterwards
     - [DONE] add tests to confirm castling is not possible after the rook is taken
   - support en passant (another state in board)
@@ -154,9 +153,12 @@ Provide I/O functionalities:
 - allow castling to be done by moving rook
 - make castle info compile time
 - get_legal_move has the original position passed in twice, in pos and move.from, remove this redundancy
+- make castling tests able to pin-point failure line, while still preserving conciseness (maybe just fold the booleans, and pass it to the gtest macros in place)
 
 // LATEST TODO:
 - continue castling:
-  - cannot castle if under threat - King
+  - [DONE] cannot castle if under threat - King
+    - add test also for threatened by a pinned piece
   - cannot castle if under threat - Rook
+    - add test also for threatened by a pinned piece
   - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)

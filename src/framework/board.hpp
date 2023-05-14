@@ -19,6 +19,7 @@ class MoverCastling;
 class Board {
  private:
   dwc::State state_;
+  mutable bool is_checking_threats_{false};
 
   void check_move(Pos fr, Pos to) const;
 
@@ -75,11 +76,11 @@ class Board {
 
   void move(Move move);
 
-  MovesT get_moves(Pos pos, bool checkOwnKing = true) const;
+  MovesT get_moves(Pos pos) const;
 
   bool is_threatened(Pos pos) const;
-
   bool is_king_threatened(Side side) const;
+  bool is_checking_threats() const { return is_checking_threats_; }
 
   void dump_moves(Pos pos) const;
 };
