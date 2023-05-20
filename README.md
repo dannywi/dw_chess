@@ -161,6 +161,8 @@ Provide I/O functionalities:
 
 // LATEST TODO:
 - continue castling:
-  - cannot castle if under threat - Rook
-    - add test also for threatened by a pinned piece
+  DONE - cannot castle if under threat - Rook
   - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
+    - overload is_threatened -> (Pos, Side) -> this one doesn't check if the square is empty
+    - use this for the rook dest, because it's empty (cannot force-move and check from outside Board)
+  - for all threatened cases, add test also for threatened by a pinned piece

@@ -165,6 +165,8 @@ TEST(BOARD, Castling04_KingDestThreatened) {
   EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
 }
 
+// todo: add king dest threatened by pinned piece
+
 TEST(BOARD, Castling05_KingThreatened) {
   Board b{"r3k2r/ppp2ppp/3p4/1B2p3/8/6b1/PPPQP1PP/R3K2R w KQkq"};
   // white king is threatened, cannot castle
@@ -176,3 +178,17 @@ TEST(BOARD, Castling05_KingThreatenedByPinnedPiece) {
   // white king is threatened by a pinned pieace, still cannot castle
   EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
 }
+
+TEST(BOARD, Castling06_RookThreatened) {
+  Board b{"r3k2r/ppp1pp1p/3p1B2/4p3/8/2b5/P1PQP1PP/R3K2R w KQkq"};
+  // the rooks are threatened, cannot castle
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>::fold(b)));
+}
+
+// TEST(BOARD, Castling06_RookDestThreatened) {
+//   Board b{"r3k2r/ppp1pp1p/3p3B/4p3/8/1b6/PP1QP1PP/R3K2R w KQkq"};
+//   display(b);
+//   // the rooks are threatened, cannot castle
+//   EXPECT_TRUE((And<QueenWhite<false>>::fold(b)));
+//   //EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>::fold(b)));
+// }

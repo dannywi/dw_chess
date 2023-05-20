@@ -326,10 +326,11 @@ class MoverCastling {
       if (!p.has_value() || p->side != piece->side || p->type != Type::ROOK) continue;
 
       if (!empty_inbetween(board, ac)) { continue; }
-      if (board.is_threatened(ac.king_pos)) { continue; }
-      // todo: check rook pos not threatened
+
       // no need to check king destination here, would've been caught by normal king threatened check
-      // todo: check rook destination not threatened
+      if (board.is_threatened(ac.king_pos)) { continue; }
+      if (board.is_threatened(ac.rook_pos)) { continue; }
+      // if (board.is_threatened(ac.rook_dest)) { continue; }
 
       // add move (only from King side)
       moves.push_back({pos, ac.king_dest});
