@@ -52,6 +52,12 @@ void Board::move(Move move) {
 }
 
 bool Board::is_threatened(Pos pos) const {
+  auto tgt = get(pos);
+  if (!tgt.has_value()) { return false; }
+  return is_threatened(pos, tgt->side);
+}
+
+bool Board::is_threatened(Pos pos, Side side) const {
   // if necessary move this to util lib with added features
   struct set_true {
     bool& b;
@@ -59,15 +65,13 @@ bool Board::is_threatened(Pos pos) const {
     ~set_true() { b = false; }
   } g{is_checking_threats_};
 
-  auto tgt = get(pos);
-  if (!tgt.has_value()) { return false; }
   // todo: create an iterator, using generator coroutine if possible
   for (char rank = '8'; rank >= '1'; --rank) {
     for (char file = 'A'; file <= 'H'; ++file) {
       Pos curr_pos{std::string{file, rank}};
       if (pos == curr_pos) { continue; }
       auto curr_pcs = get(curr_pos);
-      if (!curr_pcs.has_value() || curr_pcs->side == tgt->side) { continue; }
+      if (!curr_pcs.has_value() || curr_pcs->side == side) { continue; }
       auto moves = get_moves(curr_pos);
       for (const auto& move : moves) {
         if (move.to == pos) { return true; }

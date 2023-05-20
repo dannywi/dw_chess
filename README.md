@@ -82,8 +82,10 @@ Provide I/O functionalities:
         - [DONE] also when checking this we don't need to check if the threatening piece is pinned.
       - [DONE] cannot castle if under threat - King
         - [DONE] add test also for threatened by a pinned piece
+      - [DONE] cannot castle if under threat - Rook
     - [DONE] on move, remove the castling entry afterwards
     - [DONE] add tests to confirm castling is not possible after the rook is taken
+    - [DONE] cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
 - move validation / state:
@@ -161,8 +163,4 @@ Provide I/O functionalities:
 
 // LATEST TODO:
 - continue castling:
-  DONE - cannot castle if under threat - Rook
-  - cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
-    - overload is_threatened -> (Pos, Side) -> this one doesn't check if the square is empty
-    - use this for the rook dest, because it's empty (cannot force-move and check from outside Board)
   - for all threatened cases, add test also for threatened by a pinned piece

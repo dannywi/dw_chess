@@ -330,7 +330,7 @@ class MoverCastling {
       // no need to check king destination here, would've been caught by normal king threatened check
       if (board.is_threatened(ac.king_pos)) { continue; }
       if (board.is_threatened(ac.rook_pos)) { continue; }
-      // if (board.is_threatened(ac.rook_dest)) { continue; }
+      if (board.is_threatened(ac.rook_dest, piece->side)) { continue; }
 
       // add move (only from King side)
       moves.push_back({pos, ac.king_dest});

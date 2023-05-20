@@ -79,6 +79,7 @@ class Board {
   MovesT get_moves(Pos pos) const;
 
   bool is_threatened(Pos pos) const;
+  bool is_threatened(Pos pos, Side side) const;
   bool is_king_threatened(Side side) const;
   bool is_checking_threats() const { return is_checking_threats_; }
 
