@@ -28,36 +28,36 @@ class TaggedArithmeticT {
 
   // conversions, only add necessary ones JIT
   // with own type
-  TaggedArithmeticT operator+(TaggedArithmeticT o) const { return v_ + o.v_; }
-  TaggedArithmeticT operator-(TaggedArithmeticT o) const { return v_ - o.v_; }
-  bool operator==(TaggedArithmeticT o) const { return v_ == o.v_; }
-  bool operator!=(TaggedArithmeticT o) const { return !operator==(o); }
+  constexpr TaggedArithmeticT operator+(TaggedArithmeticT o) const { return v_ + o.v_; }
+  constexpr TaggedArithmeticT operator-(TaggedArithmeticT o) const { return v_ - o.v_; }
+  constexpr bool operator==(TaggedArithmeticT o) const { return v_ == o.v_; }
+  constexpr bool operator!=(TaggedArithmeticT o) const { return !operator==(o); }
 
   // with fundamental types
   template <typename U, typename = fund_check<U>>
-  TaggedArithmeticT operator+(U v) const {
+  constexpr TaggedArithmeticT operator+(U v) const {
     return v_ + v;
   }
 
   template <typename U, typename = fund_check<U>>
-  TaggedArithmeticT operator-(U v) const {
+  constexpr TaggedArithmeticT operator-(U v) const {
     return v_ - v;
   }
 
   template <typename U, typename = fund_check<U>>
-  bool operator==(U v) const {
+  constexpr bool operator==(U v) const {
     return v_ == v;
   }
 
   template <typename U, typename = fund_check<U>>
-  bool operator<(U v) const {
+  constexpr bool operator<(U v) const {
     return v_ < v;
   }
 
-  bool operator<(TaggedArithmeticT o) const { return v_ < o.v_; }
+  constexpr bool operator<(TaggedArithmeticT o) const { return v_ < o.v_; }
 
   template <typename U, typename = fund_check<U>>
-  bool operator<=(U v) const {
+  constexpr bool operator<=(U v) const {
     return v_ <= v;
   }
 

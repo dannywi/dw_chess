@@ -292,10 +292,23 @@ class MoverCastling {
       std::make_pair<Piece, CastleInfo>({Type::QUEEN, Side::BLACK}, {{"e8"}, {"c8"}, {"a8"}, {"d8"}}),
   }};
 
+  static constexpr bool empty_inbetween(const dwc::Board& board, const CastleInfo& ac) {
+    auto sort_horz = [](Pos a, Pos b) { return (a.file < b.file) ? std::make_pair(a, b) : std::make_pair(b, a); };
+    std::pair<Pos, Pos> must_empty = sort_horz(ac.king_pos, ac.rook_pos);
+    for (Pos p{must_empty.first.file + 1, must_empty.first.rank}; p.file != must_empty.second.file;
+         p.file = p.file + 1) {
+      if (board.get(p).has_value()) { return false; }
+    }
+    return true;
+  }
+
  public:
   static constexpr TypesT<2> TargetTypes{Type::KING, Type::ROOK};
 
   static MovesT get_moves(const dwc::Board& board, const dwc::State& state, Pos pos) {
+    // can skip this if checking for threats, castling can never take opponent's piece
+    if (board.is_checking_threats()) { return {}; }
+
     auto piece = board.get(pos);
     if (!piece.has_value() || piece->type != Type::KING) { return {}; }
 
@@ -312,20 +325,12 @@ class MoverCastling {
       auto p = board.get(ac.rook_pos);
       if (!p.has_value() || p->side != piece->side || p->type != Type::ROOK) continue;
 
-      // check must empty
-      auto sort_horz = [](Pos a, Pos b) { return (a.file < b.file) ? std::make_pair(a, b) : std::make_pair(b, a); };
-      std::pair<Pos, Pos> must_empty = sort_horz(ac.king_pos, ac.rook_pos);
-      bool empty = true;
-      for (Pos p{must_empty.first.file + 1, must_empty.first.rank}; p.file != must_empty.second.file;
-           p.file = p.file + 1) {
-        if (board.get(p).has_value()) {
-          empty = false;
-          break;
-        }
-      }
-      if (!empty) continue;
+      if (!empty_inbetween(board, ac)) { continue; }
 
-      // todo: check destinations not threatened
+      // no need to check king destination here, would've been caught by normal king threatened check
+      if (board.is_threatened(ac.king_pos)) { continue; }
+      if (board.is_threatened(ac.rook_pos)) { continue; }
+      if (board.is_threatened(ac.rook_dest, piece->side)) { continue; }
 
       // add move (only from King side)
       moves.push_back({pos, ac.king_dest});

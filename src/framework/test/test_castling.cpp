@@ -32,10 +32,26 @@ struct QueenBlack {
   static bool check(const Board& b) { return legal_move::is_legal_move(b, {"e8"}, {{"e8"}, {"c8"}}) == EXP; }
 };
 
+// deprecated, doesn't show which line fails in test log
 template <typename... F>
 void expect_true(const Board& b) {
   EXPECT_TRUE((F::check(b) && ...));
 }
+
+// do in C++11 style, somehow C++17 fold fails to call static function of the types
+template <typename... F>
+struct And;
+
+template <typename F, typename... REST>
+struct And<F, REST...> {
+  static bool fold(const Board& b) { return F::check(b) && And<REST...>::fold(b); }
+};
+
+template <>
+struct And<> {
+  static bool fold(const Board& b) { return true; }
+};
+
 }  // namespace
 
 TEST(BOARD, Castling01) {
@@ -82,14 +98,14 @@ TEST(BOARD, Castling01) {
 
 TEST(BOARD, Castling02) {
   {
-    Board b{"r3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
-    expect_true<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>(b);
+    Board b{"r3kbnr/pppq1ppp/2np4/4pb2/8/2NP4/PPPQPPPP/R3KBNR w KQkq"};
+    EXPECT_TRUE((And<KingWhite<false>, QueenWhite<true>, KingBlack<false>, QueenBlack<true>>::fold(b)));
   }
 
   {
     // almost same setting, but rook not in place
     Board b{"p3kbnr/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/4KBNR w KQkq"};
-    expect_true<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>(b);
+    EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
   }
 }
 
@@ -111,24 +127,24 @@ TEST(BOARD, Castling03_MoveKing) {
 }
 
 TEST(BOARD, Castling03_MoveQueenRook) {
-  Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
-  expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
+  Board b{"r3k2r/pppq1ppp/2np4/4pb2/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>::fold(b)));
 
   // move queen rooks
   b.move({{"a1"}, {"d1"}});
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<true>>(b);
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<true>>::fold(b)));
   b.move({{"a8"}, {"c8"}});
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
 
   // move them back, but should still not be able to castle
   b.move({{"d1"}, {"a1"}});
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
   b.move({{"c8"}, {"a8"}});
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
 }
 
 TEST(BOARD, Castling03_MoveKingRook) {
-  Board b{"r3k2r/pppq1ppp/2np4/4pbB1/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
+  Board b{"r3k2r/pppq1ppp/2np4/4pb2/8/2NP4/PPPQPPPP/R3K2R w KQkq"};
   expect_true<KingWhite<true>, QueenWhite<true>, KingBlack<true>, QueenBlack<true>>(b);
 
   // move king rooks
@@ -146,6 +162,48 @@ TEST(BOARD, Castling03_MoveKingRook) {
 
 TEST(BOARD, Castling04_KingDestThreatened) {
   Board b{"r3k2r/ppp2ppp/3p4/4pB2/8/3P4/nPPQPPPP/R3K2R w KQkq"};
-  // queen side is threatened, cannot castle
-  expect_true<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>(b);
+  // queen side dest is threatened, cannot castle
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling04_KingDestThreatenedByPinnedPiece) {
+  Board b{"r3k2r/ppp2ppp/3p1q2/4pB2/8/3P4/nPPQPKPP/R3N2R w kq"};
+  // queen side dest is threatened by a pinned piece, cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<true>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling05_KingThreatened) {
+  Board b{"r3k2r/ppp2ppp/3p4/1B2p3/8/6b1/PPPQP1PP/R3K2R w KQkq"};
+  // white king is threatened, cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling05_KingThreatenedByPinnedPiece) {
+  Board b{"r6r/ppp2ppp/3p4/1B2p2k/7b/7Q/PPP1P1PP/R3K2R w KQ"};
+  // white king is threatened by a pinned piece, cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling06_RookThreatened) {
+  Board b{"r3k2r/ppp1pp1p/3p1B2/4p3/8/2b5/P1PQP1PP/R3K2R w KQkq"};
+  // the rooks are threatened, cannot castle
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>::fold(b)));
+}
+
+TEST(BOARD, Castling06_RookThreatenedByPinnedPiece) {
+  Board b{"r6r/ppp1pp1p/3p1B2/3kp3/3b4/8/P1PQP1PP/R3K2R w KQ"};
+  // the rooks are threatened by a pinned piece, cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<false>>::fold(b)));
+}
+
+TEST(BOARD, Castling07_RookDestThreatened) {
+  Board b{"r3k2r/ppp1pp1p/3p3B/4p3/8/1b6/PP1QP1PP/R3K2R w KQkq"};
+  // the rooks are threatened, cannot castle
+  EXPECT_TRUE((And<KingWhite<true>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>::fold(b)));
+}
+
+TEST(BOARD, Castling07_RookDestThreatenedByPinnedPiece) {
+  Board b{"r3k2r/ppp1p2p/3p3B/4p3/7q/1b6/PP1QPR1P/R3K3 w Qkq"};
+  // the rooks are threatened by a pinned piece, cannot castle
+  EXPECT_TRUE((And<KingWhite<false>, QueenWhite<false>, KingBlack<false>, QueenBlack<true>>::fold(b)));
 }
