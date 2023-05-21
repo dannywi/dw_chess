@@ -65,7 +65,7 @@ Provide I/O functionalities:
   - [DONE] use for basic Mover too, so legal_moves.hpp contains only these mover (stateless) classes
   - [DONE] use type_list, so mover updater and caller don't need to repeat the list (don't use tuple since it creates objects of the types)
   - [DONE] create is_threatened(Pos) and is_king_threatened(Side) func
-  - support castling (another state in board)
+  - [DONE] support castling (another state in board)
     - [DONE] add state (class for KQkq)
     - [DONE] change signature in get_move to include const State
     - [DONE] add move
@@ -76,7 +76,7 @@ Provide I/O functionalities:
       - [DONE] use it in place of std::map in MoverCastling
       - [DONE] init state_.castling with White/King, White/Queen, ...
       - [DONE] add MoverCastling to board typelist
-    - add restrictions
+    - [DONE] add restrictions
       - [DONE] make a mode for is_checking_threats.
         - [DONE] we don't need to get castling move, because castling move can never take opponent's piece.
         - [DONE] also when checking this we don't need to check if the threatening piece is pinned.
@@ -86,6 +86,7 @@ Provide I/O functionalities:
     - [DONE] on move, remove the castling entry afterwards
     - [DONE] add tests to confirm castling is not possible after the rook is taken
     - [DONE] cannot castle if the destination is under threat (Rook only, as King would've been handled by the regular restriction)
+    - [DONE] for all threatened cases, add test also for threatened by a pinned piece
   - support en passant (another state in board)
   - i.e. there are only 2 things that can add move, the normal mover, and this irregular mover
 - move validation / state:
@@ -93,7 +94,6 @@ Provide I/O functionalities:
     - [DONE] all pieces must check resulting board after move that king is not being checked
     - [DONE] add test for pinned piece can still trigger other side's king threatened move filter
   - [DONE] rook/king moved -> can't castle on that side
-  - rook/king threatened -> can't castle on that side
 - if there's no move
   - if king is being checked, the other side wins
   - if king is not being checked, draw
@@ -162,5 +162,4 @@ Provide I/O functionalities:
 - [DONE] make castling tests able to pin-point failure line, while still preserving conciseness (maybe just fold the booleans, and pass it to the gtest macros in place)
 
 // LATEST TODO:
-- continue castling:
-  - for all threatened cases, add test also for threatened by a pinned piece
+- support en passant
