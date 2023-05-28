@@ -50,6 +50,11 @@ class TaggedArithmeticT {
   }
 
   template <typename U, typename = fund_check<U>>
+  constexpr bool operator!=(U v) const {
+    return v_ != v;
+  }
+
+  template <typename U, typename = fund_check<U>>
   constexpr bool operator<(U v) const {
     return v_ < v;
   }
@@ -74,6 +79,11 @@ class TaggedArithmeticT {
   template <typename U, typename = fund_check<U>>
   friend bool operator==(U v, TaggedArithmeticT t) {
     return v == t.v_;
+  }
+
+  template <typename U, typename = fund_check<U>>
+  friend bool operator!=(U v, TaggedArithmeticT t) {
+    return v != t.v_;
   }
 
   template <typename U, typename = fund_check<U>>

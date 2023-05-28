@@ -104,7 +104,7 @@ Provide I/O functionalities:
   - [DONE] support multiple segments
   - [DONE] support turn
   - [DONE] support castling
-  - support en passant
+  - [DONE] support en passant
   - support half move, max 50
 - move: pawn promotion
 - state:
@@ -160,6 +160,14 @@ Provide I/O functionalities:
 - make castle info compile time
 - get_legal_move has the original position passed in twice, in pos and move.from, remove this redundancy
 - [DONE] make castling tests able to pin-point failure line, while still preserving conciseness (maybe just fold the booleans, and pass it to the gtest macros in place)
+- refactor FEN lib to use State object directly
+- make logger lib to put more state info in error strings
 
 // LATEST TODO:
-- support en passant
+- [DONE] support "-" for no castling
+- [DONE] support en passant FEN for en passant
+  - [DONE] add to state
+  - [DONE] "-" for nothing
+  - [DONE] check with turn (if it's white then it can only be at 6th rank)
+- add en passant to mover / updater
+  - add tests

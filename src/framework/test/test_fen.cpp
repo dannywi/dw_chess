@@ -50,6 +50,7 @@ TEST(BOARD, FenBoardParser03) {
   EXPECT_EQ(fen::_inner::parse_castling("KQk"), (ResT{{K, Q, k}}));
   EXPECT_EQ(fen::_inner::parse_castling("KQkq"), (ResT{{K, Q, k, q}}));
   EXPECT_EQ(fen::_inner::parse_castling("qk"), (ResT{{k, q}}));
+  EXPECT_EQ(fen::_inner::parse_castling("-"), (ResT{}));
   EXPECT_EQ(fen::_inner::parse_castling(""), (ResT{}));
 
   EXPECT_THROW(fen::_inner::parse_castling("KK"), std::runtime_error);
@@ -58,4 +59,22 @@ TEST(BOARD, FenBoardParser03) {
   EXPECT_THROW(fen::_inner::parse_castling("KQkqR"), std::runtime_error);
   EXPECT_THROW(fen::_inner::parse_castling("KQR"), std::runtime_error);
   EXPECT_THROW(fen::_inner::parse_castling("R"), std::runtime_error);
+}
+
+TEST(BOARD, FenBoardParser04) {
+  EXPECT_EQ(fen::_inner::parse_en_passant("-", Side::BLACK), std::optional<dwc::Pos>{});
+  EXPECT_EQ(fen::_inner::parse_en_passant("-", Side::WHITE), std::optional<dwc::Pos>{});
+  EXPECT_EQ(fen::_inner::parse_en_passant("-", Side::SIZE), std::optional<dwc::Pos>{});
+
+  EXPECT_EQ(fen::_inner::parse_en_passant("e3", Side::BLACK), std::optional<dwc::Pos>{"e3"});
+  EXPECT_EQ(fen::_inner::parse_en_passant("b3", Side::BLACK), std::optional<dwc::Pos>{"b3"});
+  EXPECT_EQ(fen::_inner::parse_en_passant("a6", Side::WHITE), std::optional<dwc::Pos>{"a6"});
+  EXPECT_EQ(fen::_inner::parse_en_passant("g6", Side::WHITE), std::optional<dwc::Pos>{"g6"});
+
+  EXPECT_THROW(fen::_inner::parse_en_passant("c6", Side::BLACK), std::runtime_error);
+  EXPECT_THROW(fen::_inner::parse_en_passant("d7", Side::BLACK), std::runtime_error);
+  EXPECT_THROW(fen::_inner::parse_en_passant("e8", Side::BLACK), std::runtime_error);
+  EXPECT_THROW(fen::_inner::parse_en_passant("c3", Side::WHITE), std::runtime_error);
+  EXPECT_THROW(fen::_inner::parse_en_passant("b2", Side::WHITE), std::runtime_error);
+  EXPECT_THROW(fen::_inner::parse_en_passant("a1", Side::WHITE), std::runtime_error);
 }

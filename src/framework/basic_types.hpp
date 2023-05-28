@@ -140,6 +140,7 @@ struct State {
   std::optional<Side> turn;
   std::set<dwc::Piece> castling{
       {Type::KING, Side::WHITE}, {Type::QUEEN, Side::WHITE}, {Type::KING, Side::BLACK}, {Type::QUEEN, Side::BLACK}};
+  std::optional<Pos> en_passant;
 };
 
 }  // namespace dwc
