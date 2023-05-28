@@ -49,6 +49,9 @@ TEST(TaggedArithmeticT, Operator01) {
   EXPECT_FALSE(22 == a);
   EXPECT_FALSE(a == 22);
 
+  EXPECT_FALSE(10 != a);
+  EXPECT_FALSE(b != -8);
+
   EXPECT_TRUE(b < a);
   EXPECT_FALSE(a < b);
 }

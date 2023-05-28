@@ -33,6 +33,7 @@ class Board {
     state_.board = fp.get_board_pos();
     state_.turn = fp.get_turn_side().value_or(Side::WHITE);
     state_.castling = fp.get_castling();
+    state_.en_passant = fp.get_en_passant();
   }
 
   using MoverUpdaterList = utils::type_list<legal_move::MoverBasic, legal_move::UpdaterTurn, legal_move::MoverPawnAhead,

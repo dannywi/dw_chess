@@ -83,6 +83,31 @@ std::set<dwc::Piece> parse_castling(std::string_view str) {
   return castling;
 }
 
+std::optional<dwc::Pos> parse_en_passant(std::string_view str, dwc::Side turn) {
+  if (str == "-") return {};
+
+  Pos pos{str};
+
+  const uint8_t allowed_rank_white = Pos{"a6"}.rank;
+  const uint8_t allowed_rank_black = Pos{"a3"}.rank;
+  auto check_rank = [](uint8_t a, uint8_t b) {
+    if (a != b) throw std::runtime_error("fen string with wrong en passant entry");
+  };
+
+  switch (turn) {
+    case dwc::Side::WHITE:
+      check_rank(pos.rank, allowed_rank_white);
+      break;
+    case dwc::Side::BLACK:
+      check_rank(pos.rank, allowed_rank_black);
+      break;
+    default:
+      throw std::runtime_error("fen string with unknown side");
+  }
+
+  return pos;
+}
+
 }  // namespace _inner
 
 class FenParser {
@@ -90,18 +115,23 @@ class FenParser {
   dwc::BoardT board_;
   std::optional<dwc::Side> turn_side_;
   std::set<dwc::Piece> castling_;
+  std::optional<dwc::Pos> en_passant_;
 
  public:
   FenParser(std::string_view fen_str)
       : segments_(_inner::split_segments(fen_str)), board_(_inner::parse_board_pos(segments_[0])) {
+    // todo: have a func pointer list and just loop
     if (segments_.size() >= 2) turn_side_ = _inner::parse_side(segments_[1]);
     if (segments_.size() >= 3) castling_ = _inner::parse_castling(segments_[2]);
-    if (segments_.size() > 3) throw std::runtime_error("fen string has too many segments");
+    if (segments_.size() >= 4)
+      en_passant_ = _inner::parse_en_passant(segments_[3], turn_side_.value_or(dwc::Side::SIZE));
+    if (segments_.size() > 4) throw std::runtime_error("fen string has too many segments");
   }
 
   dwc::BoardT get_board_pos() const { return board_; }
   std::optional<dwc::Side> get_turn_side() const { return turn_side_; }
   std::set<dwc::Piece> get_castling() const { return castling_; }
+  std::optional<dwc::Pos> get_en_passant() const { return en_passant_; }
 };
 
 }  // namespace dwc::fen
