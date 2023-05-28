@@ -65,6 +65,7 @@ std::optional<dwc::Side> parse_side(std::string_view str) {
 
 std::set<dwc::Piece> parse_castling(std::string_view str) {
   if (str.size() > 4) throw std::runtime_error("fen string ill formatted - too many castling entries");
+  if (str == "-") return {};
   std::set<dwc::Piece> castling;
   std::set<dwc::Piece> allowed_values{
       {Type::KING, Side::WHITE}, {Type::QUEEN, Side::WHITE}, {Type::KING, Side::BLACK}, {Type::QUEEN, Side::BLACK}};

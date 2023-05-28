@@ -50,6 +50,7 @@ TEST(BOARD, FenBoardParser03) {
   EXPECT_EQ(fen::_inner::parse_castling("KQk"), (ResT{{K, Q, k}}));
   EXPECT_EQ(fen::_inner::parse_castling("KQkq"), (ResT{{K, Q, k, q}}));
   EXPECT_EQ(fen::_inner::parse_castling("qk"), (ResT{{k, q}}));
+  EXPECT_EQ(fen::_inner::parse_castling("-"), (ResT{}));
   EXPECT_EQ(fen::_inner::parse_castling(""), (ResT{}));
 
   EXPECT_THROW(fen::_inner::parse_castling("KK"), std::runtime_error);

@@ -162,4 +162,10 @@ Provide I/O functionalities:
 - [DONE] make castling tests able to pin-point failure line, while still preserving conciseness (maybe just fold the booleans, and pass it to the gtest macros in place)
 
 // LATEST TODO:
-- support en passant
+- [DONE] support "-" for no castling
+- support en passant FEN for en passant
+  - add to state
+  - "-" for nothing
+  - add tests
+- add en passant to mover / updater
+  - add tests
